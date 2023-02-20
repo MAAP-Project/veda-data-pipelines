@@ -65,31 +65,6 @@ def test_routing_regex_event():
     assert not not_called_mock.call_count
 
 
-def test_routing_cmr_event():
-    """
-    Ensure that the system properly identifies, classifies, and routes CMR-style events.
-    """
-    cmr_event = {
-        "collection": "test-collection",
-        "remote_fileurl": "s3://test-bucket/delivery/BMHD_Maria_Stages/70001_BeforeMaria_Stage0_2017-07-21.tif",
-        "granule_id": "test-granule",
-    }
-
-    with override_registry(
-        stac.generate_stac,
-        events.CmrEvent,
-        MagicMock(return_value=build_mock_stac_item({"mock": "STAC Item 1"})),
-    ) as called_mock, override_registry(
-        stac.generate_stac,
-        events.RegexEvent,
-        MagicMock(),
-    ) as not_called_mock:
-        handler.handler(cmr_event, None)
-
-    called_mock.assert_called_once_with(events.CmrEvent.parse_obj(cmr_event))
-    assert not not_called_mock.call_count
-
-
 @pytest.mark.parametrize(
     "bad_event",
     [{"collection": "test-collection"}],

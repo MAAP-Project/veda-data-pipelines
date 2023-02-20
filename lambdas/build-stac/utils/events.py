@@ -32,11 +32,6 @@ class BaseEvent(BaseModel, frozen=True):
             id = Path(self.remote_fileurl).stem
         return id
 
-
-class CmrEvent(BaseEvent):
-    granule_id: str
-
-
 class RegexEvent(BaseEvent):
     filename_regex: Optional[str]
 
@@ -48,4 +43,4 @@ class RegexEvent(BaseEvent):
     datetime_range: Optional[INTERVAL] = None
 
 
-SupportedEvent = Union[RegexEvent, CmrEvent]
+SupportedEvent = Union[RegexEvent]

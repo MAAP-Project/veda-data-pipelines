@@ -22,14 +22,7 @@ def handler(event: Dict[str, Any], context) -> Union[S3LinkOutput, StacItemOutpu
     Lambda handler for STAC Collection Item generation
 
     Arguments:
-    event - object with event parameters to be provided in one of 2 formats.
-        Format option 1 (with Granule ID defined to retrieve all metadata from CMR):
-        {
-            "collection": "OMDOAO3e",
-            "remote_fileurl": "s3://climatedashboard-data/OMDOAO3e/OMI-Aura_L3-OMDOAO3e_2022m0120_v003-2022m0122t021759.he5.tif",
-            "granule_id": "G2205784904-GES_DISC",
-        }
-        Format option 2 (with regex provided to parse datetime from the filename:
+    event - object with event parameters.
         {
             "collection": "OMDOAO3e",
             "remote_fileurl": "s3://climatedashboard-data/OMSO2PCA/OMSO2PCA_LUT_SCD_2005.tif",
@@ -37,8 +30,7 @@ def handler(event: Dict[str, Any], context) -> Union[S3LinkOutput, StacItemOutpu
 
     """
 
-    EventType = events.CmrEvent if event.get("granule_id") else events.RegexEvent
-    parsed_event = EventType.parse_obj(event)
+    parsed_event = events.RegexEvent.parse_obj(event)
     stac_item = stac.generate_stac(parsed_event).to_dict()
 
     output: StacItemOutput = {"stac_item": stac_item}
@@ -57,17 +49,9 @@ def handler(event: Dict[str, Any], context) -> Union[S3LinkOutput, StacItemOutpu
 
 if __name__ == "__main__":
     sample_event = {
-        "collection": "GEDI02_A",
-        "remote_fileurl": "s3://nasa-maap-data-store/file-staging/nasa-map/GEDI02_A___002/2020.12.31/GEDI02_A_2020366232302_O11636_02_T08595_02_003_02_V002.h5",
-        "granule_id": "G1201782029-NASA_MAAP",
-        "id": "G1201782029-NASA_MAAP",
-        "mode": "cmr",
-        "test_links": None,
-        "reverse_coords": None,
-        "asset_name": "data",
-        "asset_roles": [
-            "data"
-        ],
-        "asset_media_type": "application/x-hdf5"
-        }
+        "collection": "icesat2-boreal",
+        "remote_fileurl": "s3://maap-user-shared-data/icesat2-boreal/boreal_agb_202302151676439579_1326.tif",
+        "upload": True,
+        "properties": {}
+    }
     print(json.dumps(handler(sample_event, {}), indent=2))
