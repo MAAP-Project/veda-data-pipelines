@@ -73,7 +73,7 @@ def get_secret(secret_name: str) -> None:
 def get_sf_ingestion_arn():
     sts = boto3.client("sts")
     ACCOUNT_ID = sts.get_caller_identity().get("Account")
-    REGION = os.environ.get("AWS_REGION", "us-east-1")
+    REGION = os.environ.get("AWS_REGION", "us-west-2")
     APP_NAME = os.environ.get("APP_NAME")
     ENV = os.environ.get("ENV", "dev")
     return f"arn:aws:states:{REGION}:{ACCOUNT_ID}:stateMachine:{APP_NAME}-{ENV}-stepfunction-discover"
