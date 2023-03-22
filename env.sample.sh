@@ -32,8 +32,7 @@ else
     export COGNITO_APP_SECRET=$cognitoAppSecret
     export ENV=$1
     export APP_NAME="veda-data-pipelines"
-
-        export STAC_INGESTOR_URL=$stacIngestorUrl
+    export STAC_INGESTOR_API_URL=$stacIngestorUrl
 
     echo "$1 environment set"
 fi
