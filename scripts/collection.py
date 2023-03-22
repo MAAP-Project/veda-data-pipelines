@@ -36,7 +36,7 @@ def insert_collections(files):
     bearer_token = credentials["access_token"]
 
     print("Inserting collections:")
-    base_url = os.environ.get("STAC_INGESTOR_URL")
+    base_url = os.environ.get("STAC_INGESTOR_API_URL")
     with requests.Session() as s:
         for file in files:
             print(file)
