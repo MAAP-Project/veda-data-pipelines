@@ -1,6 +1,8 @@
 import json
 import os
-from sys import getsizeof
+import importlib
+import subprocess
+import sys 
 from typing import Any, Dict, TypedDict, Union
 from uuid import uuid4
 
@@ -22,7 +24,7 @@ def handler(event: Dict[str, Any], context) -> Union[S3LinkOutput, StacItemOutpu
     Lambda handler for STAC Collection Item generation
 
     Arguments:
-    event - object with event parameters to be provided in one of 2 formats.
+    event - object with event parameters to be provided in one of 3 formats.
         Format option 1 (with Granule ID defined to retrieve all metadata from CMR):
         {
             "collection": "OMDOAO3e",
@@ -34,17 +36,39 @@ def handler(event: Dict[str, Any], context) -> Union[S3LinkOutput, StacItemOutpu
             "collection": "OMDOAO3e",
             "remote_fileurl": "s3://climatedashboard-data/OMSO2PCA/OMSO2PCA_LUT_SCD_2005.tif",
         }
+        Format option 3 (with stactools package) where : 
+            - link-to-repo is in the format accepted by `pip install`
+            - import-string represents the module that can be imported with `importlib` and contains a `create_item` function building a STAC item. 
+        {
+            "stactools-package": "<link-to-repo>::<import-string>"
+            " ... additional keys corresponding to that package's create_item method arguments"
+        }
+
+        example : 
+
+        {
+            "stactools-package": "git+https://github.com/developmentseed/cop-dem.git@feat/collection::stactools.cop_dem.stac"
+            "href": "some-ref",
+            "host" : "some-host",
+        }
+
 
     """
 
-    EventType = events.CmrEvent if event.get("granule_id") else events.RegexEvent
-    parsed_event = EventType.parse_obj(event)
-    stac_item = stac.generate_stac(parsed_event).to_dict()
+    if "stactools-package" in event:
+        repo_url, module_str = event["stactools-package"].split(":")
+        subprocess.run([sys.executable, "-m", "pip", "install", repo_url])
+        stac_module = importlib(module_str)
+        stac_item = stac_module.create_item(event)
+    else:
+        EventType = events.CmrEvent if event.get("granule_id") else events.RegexEvent
+        parsed_event = EventType.parse_obj(event)
+        stac_item = stac.generate_stac(parsed_event).to_dict()
 
     output: StacItemOutput = {"stac_item": stac_item}
 
     # Return STAC Item Directly
-    if getsizeof(json.dumps(output)) < (256 * 1024):
+    if sys.getsizeof(json.dumps(output)) < (256 * 1024):
         return output
 
     # Return link to STAC Item
