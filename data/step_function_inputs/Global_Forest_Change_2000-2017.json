@@ -1,0 +1,10 @@
+{
+  "queue_messages": "true",
+  "collection": "Global_Forest_Change_2000-2017",
+  "version": "1.5",
+  "discovery": "cmr",
+  "mode": "cmr",
+  "asset_name": "data",
+  "asset_roles": ["data"],
+  "asset_media_type": "image/tiff"
+}

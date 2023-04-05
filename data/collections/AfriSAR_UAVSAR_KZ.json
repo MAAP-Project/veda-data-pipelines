@@ -1,0 +1,28 @@
+{
+  "id": "AfriSAR_UAVSAR_KZ",
+  "stac_version": "1.0.0",
+  "license": "not-provided",
+  "title": "AfriSAR UAVSAR Vertical Wavenumber (KZ) Generated Using NISAR Tools",
+  "type": "Collection",
+  "description": "The Vertical Wavenumber dataset is the derivative of the radar interferometic phase for each single-look-complex (SLC) sample collected during the during the February-March 2016 AfriSAR campaign.  These data were collected from repeat-pass flights over Gabonese forest using the Uninhabited Aerial Vehicle Synthetic Aperture Radar (UAVSAR) instrument.  Vertical wavenumber is calculated using precise trajectory geometry and digital elevation models for each SLC sample and is provided in units of rad/meter.  The AfriSAR campaign was a collaborative airborne mission between the National Aeronautics and Space Administration, the European Space Agency and the Gabonese Space Agency collecting radar, lidar and field measurements in support of future space borne missions for biomass research.",
+  "extent": {
+    "spatial": {
+      "bbox": [
+        [
+          "9.1694444",
+          "0.61",
+          "11.8641667",
+          "-2.0677778"
+        ]
+      ]
+    },
+    "temporal": {
+      "interval": [
+        [
+          "2016-02-25T00:00:00.000Z",
+          "2016-03-08T23:59:59.000Z"
+        ]
+      ]
+    }
+  }
+}

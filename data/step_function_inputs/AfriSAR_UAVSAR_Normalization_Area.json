@@ -1,0 +1,12 @@
+{
+  "queue_messages": "true",
+  "collection": "AfriSAR_UAVSAR_Normalization_Area",
+  "version": "1",
+  "discovery": "cmr",
+  "mode": "cmr",
+  "asset_name": "data",
+  "asset_roles": [
+    "data"
+  ],
+  "link_rel": "http://esipfed.org/ns/fedsearch/1.1/s3#"
+}

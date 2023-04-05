@@ -1,0 +1,11 @@
+{
+  "queue_messages": "true",
+  "collection": "AFRISAR_DLR2",
+  "version": "1",
+  "discovery": "cmr",
+  "mode": "cmr",
+  "asset_name": "data",
+  "asset_roles": [
+    "data"
+  ]
+}

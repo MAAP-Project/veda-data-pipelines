@@ -1,0 +1,28 @@
+{
+  "id": "Global_Forest_Change_2000-2017",
+  "stac_version": "1.0.0",
+  "license": "not-provided",
+  "title": "Global Forest Change 2000-2017",
+  "type": "Collection",
+  "description": "Global Forest Change 2000–2017 provides results from time-series analysis of Landsat images in characterizing global forest extent and change from 2000 through 2017. This global dataset is divided into 10x10 degree tiles, consisting of seven files per tile. All files contain unsigned 8-bit values and have a spatial resolution of 1 arc-second per pixel or approximately 30 meters per pixel at the equator. The available layers are treecover2000, gain, lossyear, and datamask. treecover2000: Tree cover in the year 2000, defined as canopy closure for all vegetation taller than 5m in height. Encoded as a percentage per output grid cell, in the range 0–100. gain: Forest gain during the period 2000–2012, defined as the inverse of loss, or a non-forest to forest change entirely within the study period. Encoded as either 1 (gain) or 0 (no gain). lossyear: Forest loss during the period 2000–2017, defined as a stand-replacement disturbance, or a change from a forest to non-forest state. Encoded as either 0 (no loss) or else a value in the range 1–17, representing loss detected primarily in the year 2001–2017, respectively. datamask: Three values representing areas of no data (0), mapped land surface (1), and permanent water bodies (2). ",
+  "extent": {
+    "spatial": {
+      "bbox": [
+        [
+          "-180",
+          "80",
+          "180",
+          "-60"
+        ]
+      ]
+    },
+    "temporal": {
+      "interval": [
+        [
+          "2000-01-01T00:00:00.000Z",
+          "2017-12-31T23:59:59.000Z"
+        ]
+      ]
+    }
+  }
+}

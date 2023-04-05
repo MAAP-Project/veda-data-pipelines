@@ -1,0 +1,9 @@
+{
+  "queue_messages": "true",
+  "collection": "ABoVE_UAVSAR_PALSAR",
+  "version": "1",
+  "discovery": "cmr",
+  "mode": "cmr",
+  "asset_name": "data",
+  "asset_roles": ["data"]
+}

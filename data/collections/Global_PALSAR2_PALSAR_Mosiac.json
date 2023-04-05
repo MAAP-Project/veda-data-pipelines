@@ -1,0 +1,28 @@
+{
+  "id": "Global_PALSAR2_PALSAR_Mosiac",
+  "stac_version": "1.0.0",
+  "license": "not-provided",
+  "title": "Global 25m Resolution PALSAR-2/PALSAR Mosaic",
+  "type": "Collection",
+  "description": "This global PALSAR/PALSAR-2 dataset is a mosaic of all PALSAR/PALSAR-2 synthetic aperture radar (SAR) backscattering coefficient images.  Correction of geometric distortion specific to SAR (ortho-rectification) and topographic effects on image intensity (slope correction) are applied.  The HH and HV polarization, mosaics and local incidence angles are provided at 25 m resolution for years 2007 through 2017.  A file containing the date of observation is also included in the distribution.  The dataset provides spatiotemporal homogeneous backscatter for forest classification which can be used to help understand and monitor responses to environmental changes. ",
+  "extent": {
+    "spatial": {
+      "bbox": [
+        [
+          "-180",
+          "90",
+          "180",
+          "-90"
+        ]
+      ]
+    },
+    "temporal": {
+      "interval": [
+        [
+          "2007-01-01T00:00:00.000Z",
+          "2017-12-31T23:59:59.000Z"
+        ]
+      ]
+    }
+  }
+}

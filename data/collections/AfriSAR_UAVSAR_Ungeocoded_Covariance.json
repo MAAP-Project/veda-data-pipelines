@@ -1,0 +1,28 @@
+{
+  "id": "AfriSAR_UAVSAR_Ungeocoded_Covariance",
+  "stac_version": "1.0.0",
+  "license": "not-provided",
+  "title": "AfriSAR UAVSAR Ungeocoded Covariance Matrix product Generated Using NISAR Tools",
+  "type": "Collection",
+  "description": "The native Ungeocoded Covariance Matrix dataset is the 4x4 polarimetric covariance matrix estimated over 9x41 looks starting from a set of polarimetric co-registered single-look-complex (SLC) data (HH, HV, VH, and VV).  These covariance matrix datasets provides the variability between retrievals for each SLC polarization and provides inferences on the scattering characterization of a target.  The SLC data is collected from repeat-pass flights over Gabonese forest using the Uninhabited Aerial Vehicle Synthetic Aperture Radar (UAVSAR) instrument in February-March 2016 during the AfriSAR field campaign.  The AfriSAR campaign was a collaborative airborne mission between the National Aeronautics and Space Administration, the European Space Agency and the Gabonese Space Agency collecting radar, lidar and field measurements in support of future space borne missions for biomass research.",
+  "extent": {
+    "spatial": {
+      "bbox": [
+        [
+          "9.1694444",
+          "0.61",
+          "11.8641667",
+          "-2.0677778"
+        ]
+      ]
+    },
+    "temporal": {
+      "interval": [
+        [
+          "2016-02-25T00:00:00.000Z",
+          "2016-03-08T23:59:59.000Z"
+        ]
+      ]
+    }
+  }
+}

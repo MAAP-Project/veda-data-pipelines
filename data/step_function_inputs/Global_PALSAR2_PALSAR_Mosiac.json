@@ -1,0 +1,10 @@
+{
+  "queue_messages": "true",
+  "collection": "Global_PALSAR2_PALSAR_Mosiac",
+  "version": "1",
+  "discovery": "cmr",
+  "mode": "cmr",
+  "asset_name": "data",
+  "asset_roles": ["data"],
+  "asset_media_type": "application/tar+gzip"
+}

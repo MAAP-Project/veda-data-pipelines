@@ -1,0 +1,28 @@
+{
+  "id": "AfriSAR_UAVSAR_Normalization_Area",
+  "stac_version": "1.0.0",
+  "license": "not-provided",
+  "title": "AfriSAR UAVSAR Normalization Area Generated Using NISAR Tools",
+  "type": "Collection",
+  "description": "The Normalization Area dataset provides the factor used to convert radar brightness into the scatter coefficient, sigma-0 (or gamma-0).  In radar retrievals, sigma-0 represents the measure of strength of the radar signal returned by a distributed scatterer.  The factor provided includes the correction from radiometric variation due to topography and radar incidence angle. The Normalization Area dataset is applicable to data collected by the Uninhabited Aerial Vehicle Synthetic Aperture Radar (UAVSAR) instrument over the Gabonese forest from February-March 2016.  This data was collected as part of the AfriSAR field campaign; a precursor to upcoming space borne missions for biomass research.",
+  "extent": {
+    "spatial": {
+      "bbox": [
+        [
+          "9.1694444",
+          "0.61",
+          "11.8641667",
+          "-2.0677778"
+        ]
+      ]
+    },
+    "temporal": {
+      "interval": [
+        [
+          "2016-02-25T00:00:00.000Z",
+          "2016-03-08T23:59:59.000Z"
+        ]
+      ]
+    }
+  }
+}

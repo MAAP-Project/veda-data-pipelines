@@ -1,0 +1,28 @@
+{
+  "id": "ABoVE_UAVSAR_PALSAR",
+  "stac_version": "1.0.0",
+  "license": "not-provided",
+  "title": "Arctic-Boreal Vulnerability Experiment Uninhabited Aerial Vehicle Synthetic Aperture Radar Polarimetric SAR",
+  "type": "Collection",
+  "description": "The Arctic-Boreal Vulnerability Experiment (ABoVE) is a NASA Terrestrial Ecology Program field campaign conducted from June through September 2017 over Alaska and Western Canada. ABoVE is a large-scale study of environmental change and to assess the vulnerability and resilience of Arctic and boreal ecosystems and provide scientific bases for societal response decision making.  ABoVE utilized the Uninhabited Aerial Vehicle Synthetic Aperture Radar (UAVSAR) Polarimetric SAR (PALSAR) instrument to provide image transects to survey the land surface, hydrological systems and vegetation.  SAR products in this collection include the Digital Elevation Model (DEM), the local incidence angle, the terrain slope product, ground projected complex cross products, the compressed stokes matrix, pauli decompositions, multi-look cross products, and scene annotation files.  ",
+  "extent": {
+    "spatial": {
+      "bbox": [
+        [
+          "-166.788382",
+          "69.708769",
+          "-110.947561",
+          "59.729364"
+        ]
+      ]
+    },
+    "temporal": {
+      "interval": [
+        [
+          "2017-06-13T22:03:35.000Z",
+          "2017-06-22T19:25:35.000Z"
+        ]
+      ]
+    }
+  }
+}

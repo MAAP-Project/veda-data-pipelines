@@ -1,0 +1,28 @@
+{
+  "id": "AfriSAR_UAVSAR_Geocoded_SLC",
+  "stac_version": "1.0.0",
+  "license": "not-provided",
+  "title": "AfriSAR UAVSAR Geocoded SLCs Generated Using NISAR Tools",
+  "type": "Collection",
+  "description": "The Geocoded SLC (single-look-complex) dataset contains the geolocated SLC magnitude of a particular polarization for the master track of repeat-pass flights of the Uninhabited Aerial Vehicle Synthetic Aperture Radar (UAVSAR) instrument over the Gabonese forest.  These SLC's were collected as part of the AfriSAR field campaign that took place from February-March 2016.  The AfriSAR campaign was a collaborative airborne mission between the National Aeronautics and Space Administration, the European Space Agency and the Gabonese Space Agency collecting radar, lidar and field measurements in support of future space borne missions for biomass research.",
+  "extent": {
+    "spatial": {
+      "bbox": [
+        [
+          "9.1694444",
+          "0.61",
+          "11.8641667",
+          "-2.0677778"
+        ]
+      ]
+    },
+    "temporal": {
+      "interval": [
+        [
+          "2016-02-25T00:00:00.000Z",
+          "2016-03-08T23:59:59.000Z"
+        ]
+      ]
+    }
+  }
+}
