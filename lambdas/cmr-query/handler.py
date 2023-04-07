@@ -4,7 +4,57 @@ import json
 import datetime as dt
 
 import requests
+from typing import Any, Dict, List
+import pystac
 
+def multi_asset_items(
+    data_file: str,
+    data_file_regex: str,
+    data: Dict[str, Any]
+) -> List[Dict[str, Any]]:
+    """
+        Returns a list of file_obj's with the added "assets" key:value where "assets"
+        is a Dict[str, pystac.Asset] used to add item assets to a STAC item
+
+        Parameters:
+            data_file: str
+                string value describing the data file from which to build the STAC item
+            data_file_regex: str
+                string value becomes a regex pattern to find all related data file urls,
+                commonly a product ID or other identifier shared amongst product files
+            data: Dict[str, Any]
+                dictionary of file_obj's generated from querying CMR
+        Return:
+            objects: List[Dict[str, Any]]
+                modified dictionary of passed in file_obj's, used to generate STAC items
+    """
+    fileurls_pattern = re.compile(data_file_regex)
+    objects = []
+    product_ids = {}
+    
+    def _get_asset_name(remote_fileurl: str, product_id: str) -> str:
+        return re.sub(f".*{product_id}[-_]?", "", remote_fileurl)
+
+    # Creates a Dict[product_id, Dict[file_name, List[pystac.Asset]]]
+    for item in data:
+        match = re.search(fileurls_pattern, item["remote_fileurl"])
+        if match:
+            product_id = match.group()
+            product_ids[product_id] = product_ids.get(product_id, {})
+
+            product_ids[product_id][_get_asset_name(item["remote_fileurl"], product_id)] = pystac.Asset(
+                href=item["remote_fileurl"],
+                roles=["data"],
+            )
+
+    # Creates an objects Dict of modified file_obj's, adding file_obj["assets"]
+    for product_id in product_ids.keys():
+        for file_obj in data:
+            if re.search(f".*{product_id}.*{data_file}", file_obj["remote_fileurl"]):
+                file_obj["assets"] = product_ids[product_id]
+                objects.append(file_obj)
+
+    return objects
 
 def get_cmr_granules_endpoint(event):
     default_cmr_api_url = (
@@ -82,12 +132,21 @@ def handler(event, context):
                             file_obj[key] = value
         granules_to_insert.append(file_obj)
 
+    if event.get("data_file_regex"):
+        output = multi_asset_items(
+            data_file=event.get("data_file"),
+            data_file_regex=event.get("data_file_regex"),
+            data=granules_to_insert
+        )
+    else:
+        output = granules_to_insert
+
     # Useful for testing locally with build-stac/handler.py
     print(json.dumps(granules_to_insert[0], indent=2))
     return_obj = {
         **event,
         "cogify": event.get("cogify", False),
-        "objects": granules_to_insert,
+        "objects": output,
     }
     return return_obj
 
@@ -95,14 +154,16 @@ def handler(event, context):
 if __name__ == "__main__":
     sample_event = {
         "queue_messages": "true",
-        "collection": "GEDI02_A",
-        "version": "002",
+        "collection": "AfriSAR_UAVSAR_Ungeocoded_Covariance",
+        "version": "1",
         "discovery": "cmr",
-        "temporal": ["2019-04-01T00:00:00Z", "2019-07-31T23:59:59Z"],
+        "temporal": ["2016-03-08T00:00:00Z", "2016-03-08T00:00:00Z"],
         "mode": "cmr",
         "asset_name": "data",
         "asset_roles": ["data"],
-        "asset_media_type": "application/x-hdf5",
+        "asset_media_type": "application/x-hdr",
+        "data_file": "cov_1-1.hdr",
+        "data_file_regex": "uavsar_AfriSAR_v1-.*_\d{5}_\d{5}_\d{3}_\d{3}_\d{6}"
     }
 
     handler(sample_event, {})
