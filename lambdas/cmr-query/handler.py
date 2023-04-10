@@ -21,11 +21,49 @@ def multi_asset_items(
         data_file_regex: str
             string value becomes a regex pattern to find all related data file urls,
             commonly a product ID or other identifier shared amongst product files
-        data: Dict[str, Any]
+        data: List[Dict[str, Any]]
             dictionary of file_obj's generated from querying CMR
     Return:
         objects: List[Dict[str, Any]]
             modified dictionary of passed in file_obj's, used to generate STAC items
+
+    Example:
+        multi_asset_items(
+            "cov_1-1.hdr".
+            "uavsar_AfriSAR_v1-.*_\d{5}_\d{5}_\d{3}_\d{3}_\d{6}",
+            {
+                'collection': 'AfriSAR_UAVSAR_Ungeocoded_Covariance',
+                'remote_fileurl': 's3://nasa-maap-data-store/file-staging/nasa-map/AfriSAR_UAVSAR_Ungeocoded_Covariance___1/uavsar_AfriSAR_v1-cov_topo_a41_r9_localPsi.rdr',
+                'granule_id': 'G1200110696-NASA_MAAP',
+                'id': 'G1200110696-NASA_MAAP',
+                'mode': 'cmr',
+                'test_links': None,
+                'reverse_coords': None,
+                'asset_name': 'data',
+                'asset_roles': ['data'],
+                'asset_media_type': 'application/x-hdr'
+            }
+        )
+        Returns:
+        {
+            'collection': 'AfriSAR_UAVSAR_Ungeocoded_Covariance',
+            'remote_fileurl': 's3://nasa-maap-data-store/file-staging/nasa-map/AfriSAR_UAVSAR_Ungeocoded_Covariance___1/uavsar_AfriSAR_v1-cov_coreg_fine_hsixty_14050_16015_140_009_160308_cov_1-1.hdr',
+            'granule_id': 'G1200109928-NASA_MAAP',
+            'id': 'G1200109928-NASA_MAAP',
+            'mode': 'cmr',
+            'test_links': None,
+            'reverse_coords': None,
+            'asset_name': 'data',
+            'asset_roles': ['data'],
+            'asset_media_type': 'application/x-hdr',
+            'assets': {
+                'cov_1-1.bin': <Asset href=s3://nasa-maap-data-store/file-staging/nasa-map/AfriSAR_UAVSAR_Ungeocoded_Covariance___1/uavsar_AfriSAR_v1-cov_coreg_fine_hsixty_14050_16015_140_009_160308_cov_1-1.bin>,
+                'cov_1-1.hdr': <Asset href=s3://nasa-maap-data-store/file-staging/nasa-map/AfriSAR_UAVSAR_Ungeocoded_Covariance___1/uavsar_AfriSAR_v1-cov_coreg_fine_hsixty_14050_16015_140_009_160308_cov_1-1.hdr>,
+                'cov_1-2.bin': <Asset href=s3://nasa-maap-data-store/file-staging/nasa-map/AfriSAR_UAVSAR_Ungeocoded_Covariance___1/uavsar_AfriSAR_v1-cov_coreg_fine_hsixty_14050_16015_140_009_160308_cov_1-2.bin>,
+                ...,
+            }
+            'product_id': 'uavsar_AfriSAR_v1-cov_coreg_fine_hsixty_14050_16015_140_009_160308'
+        }
     """
     fileurls_pattern = re.compile(data_file_regex)
     objects = []
@@ -45,14 +83,15 @@ def multi_asset_items(
                 _get_asset_name(item["remote_fileurl"], product_id)
             ] = pystac.Asset(
                 href=item["remote_fileurl"],
-                roles=["data"],
+                roles=item["asset_roles"],
             )
 
     # Creates an objects Dict of modified file_obj's, adding file_obj["assets"]
     for product_id in product_ids.keys():
         for file_obj in data:
             if re.search(f".*{product_id}.*{data_file}", file_obj["remote_fileurl"]):
-                file_obj["assets"] = product_ids[product_id]
+                file_obj["assets"] = dict(sorted(product_ids[product_id].items()))
+                file_obj["product_id"] = product_id
                 objects.append(file_obj)
 
     return objects
@@ -144,7 +183,7 @@ def handler(event, context):
         output = granules_to_insert
 
     # Useful for testing locally with build-stac/handler.py
-    print(json.dumps(granules_to_insert[0], indent=2))
+    print(output[0])
     return_obj = {
         **event,
         "cogify": event.get("cogify", False),
