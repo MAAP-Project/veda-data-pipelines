@@ -1,0 +1,32 @@
+{
+  "id": "GEDI_CalVal_Lidar_Data_Compressed",
+  "stac_version": "1.0.0",
+  "license": "not-provided",
+  "title": "Global Ecosystem Dynamics Investigation (GEDI) Calibration/Validation Airborne Lidar Dataset (Compressed)",
+  "type": "Collection",
+  "description": "The Global Ecosystem Dynamics Investigation (GEDI) Forest Structure and Biomass Database (FSBD) is a collection of field and LiDAR datasets developed to serve a central repository for calibration and validation of the GEDI mission data.  The GEDI Cal/Val Lidar Data collection contains the field data contributions to the FSBD.  The database has contributions across the globe for a variety of vegetation types from projects dating back to 2001. The data is in LAZ format and contains a point cloud of lidar returns.",
+  "extent": {
+    "spatial": {
+      "bbox": [
+        [
+          -180,
+          90,
+          180,
+          -90
+        ]
+      ]
+    },
+    "temporal": {
+      "interval": [
+        [
+          "2001-01-01T00:00:00.000Z",
+          "2020-12-31T00:00:00.000Z"
+        ]
+      ]
+    }
+  },
+  "links": [],
+  "dashboard:is_periodic": false,
+  "dashboard:time_density": null,
+  "assets": {}
+}

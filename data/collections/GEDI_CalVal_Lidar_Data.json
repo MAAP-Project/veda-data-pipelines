@@ -1,0 +1,170 @@
+{
+  "id": "GEDI_CalVal_Lidar_Data",
+  "stac_version": "1.0.0",
+  "license": "not-provided",
+  "title": "Global Ecosystem Dynamics Investigation (GEDI) Calibration/Validation Airborne Lidar Dataset",
+  "type": "Collection",
+  "description": "The Global Ecosystem Dynamics Investigation (GEDI) Forest Structure and Biomass Database (FSBD) is a collection of field and LiDAR datasets developed to serve a central repository for calibration and validation of the GEDI mission data.  The GEDI Cal/Val Lidar Data collection contains the field data contributions to the FSBD.  The database has contributions across the globe for a variety of vegetation types from projects dating back to 2001.  Summaries of the individual projects are as follows:The australia_ausplotsforests airborne lidar dataset was collected by the Ausplots Forests project in Australia, Australia during 2012 - 2013. The dataset was then contributed to the GEDI Forest Structure and Biomass Database (FSBD). The data is in LAS format and contains a point cloud of lidar returns.The australia_ilcp2015 airborne lidar dataset was collected by the Injune Landscape Collaborative Project project in The Injune Landscape Collaborative Project, Australia during December 2015. The dataset was then contributed to the GEDI Forest Structure and Biomass Database (FSBD).The data was collected with the Riegl LMS-Q560 instrument. The data is in LAS format and contains a point cloud of lidar returns.The australia_robsoncreek airborne lidar dataset was collected by the Robson Creek Super Site project in Australia during September 2012. The dataset was then contributed to the GEDI Forest Structure and Biomass Database (FSBD).The data was collected with the Riegl LMS-Q560 instrument. The data is in LAS format and contains a point cloud of lidar returns.The gabon_mondah airborne lidar dataset was collected by the AfriSAR project in Mondah Forest, Gabon - AfriSAR Campaign, Africa during March 2016. The dataset was then contributed to the GEDI Forest Structure and Biomass Database (FSBD). The data was collected with the LVIS instrument at 24,000 ft above ground level. The data is in LAS format and contains a point cloud of lidar returns.The italy_sella airborne lidar dataset was collected in Val di Sella, Italy during 2008. The dataset was then contributed to the GEDI Forest Structure and Biomass Database (FSBD). The data was collected with the Optech ALTM3100 instrument at 1000 m above ground level. The data is in LAS format and contains a point cloud of lidar returns.The panama_bci airborne lidar dataset was collected by the Barro Colorado Island project in Barro Colorado Island 50-ha plot, Panama during September 2009. The dataset was then contributed to the GEDI Forest Structure and Biomass Database (FSBD). The data is in LAS format and contains a point cloud of lidar returns.The usa_cascadeeastzone airborne lidar dataset was collected by the CascadeEastZone project in SouthForkSalmon, Washington, USA during NA. The dataset was then contributed to the GEDI Forest Structure and Biomass Database (FSBD). The data is in LAS format and contains a point cloud of lidar returns.The usa_cflra airborne lidar dataset was collected by the CFLRA project in Idaho, USA during 2009 - 2014. The dataset was then contributed to the GEDI Forest Structure and Biomass Database (FSBD). The data was collected with the Leica ALS50-II and Leica ALS60 instruments at 650 – 1500 m above ground level. The data is in LAS format and contains a point cloud of lidar returns.The usa_clearcreek airborne lidar dataset was collected by the ClearCreek project in Idaho, USA during 2009. The dataset was then contributed to the GEDI Forest Structure and Biomass Database (FSBD). The data was collected with the Leica ALS60 instrument at 14500 ft above sea level. The data is in LAS format and contains a point cloud of lidar returns.The usa_damon airborne lidar dataset was collected by the Damon project in Oregon, USA during 2011. The dataset was then contributed to the GEDI Forest Structure and Biomass Database (FSBD). The data is in LAS format and contains a point cloud of lidar returns.The usa_dcef airborne lidar dataset was collected by the DCEF NFP project in Idaho, USA during NA. The dataset was then contributed to the GEDI Forest Structure and Biomass Database (FSBD). The data was collected at 1500 m above ground level. The data is in LAS format and contains a point cloud of lidar returns.The usa_falkowski airborne lidar dataset was collected by the Forest Vegetation Simulator project in Michigan, USA during 2012. The dataset was then contributed to the GEDI Forest Structure and Biomass Database (FSBD). The data is in LAS format and contains a point cloud of lidar returns.The usa_fernan airborne lidar dataset was collected by the Fernan project in Idaho, USA during 2014 - 2015. The dataset was then contributed to the GEDI Forest Structure and Biomass Database (FSBD). The data was collected with the Leica ALS70 and Leica ALS80 instrument at 1400 - 1450 m above ground level. The data is in LAS format and contains a point cloud of lidar returns.The usa_fitsum airborne lidar dataset was collected by the Fitsum project in SouthForkSalmon, Idaho, USA during 2008. The dataset was then contributed to the GEDI Forest Structure and Biomass Database (FSBD). The data is in LAS format and contains a point cloud of lidar returns.The usa_moscowmtn airborne lidar dataset was collected by the MoscowMtn project in Idaho, USA during 2003-2009. The dataset was then contributed to the GEDI Forest Structure and Biomass Database (FSBD). The data was collected with the Leica ALS40 instrument. The data is in LAS format and contains a point cloud of lidar returns.The usa_pref airborne lidar dataset was collected by the PREF project in Idaho, USA during 2011. The dataset was then contributed to the GEDI Forest Structure and Biomass Database (FSBD). The data was collected at 1500 m above ground level. The data is in LAS format and contains a point cloud of lidar returns.The usa_pref_fia airborne lidar dataset was collected by the PREF project in Idaho, USA during 2011. The dataset was then contributed to the GEDI Forest Structure and Biomass Database (FSBD). The data was collected at 1500 m above ground level. The data is in LAS format and contains a point cloud of lidar returns.The usa_sierra airborne lidar dataset was collected by the Sierra Nevada Measurements project in Teakettle Experimental Forest, USA during August 2008. The dataset was then contributed to the GEDI Forest Structure and Biomass Database (FSBD). The data is in LAS format and contains a point cloud of lidar returns.The usa_slatecreek airborne lidar dataset was collected by the Slate Creek project in Idaho, USA during 2006. The dataset was then contributed to the GEDI Forest Structure and Biomass Database (FSBD). The data was collected at 1100 m above ground level. The data is in LAS format and contains a point cloud of lidar returns.The usa_sonoma airborne lidar dataset was collected by a Carbon Monitoring System project in Sonoma County, California, USA during November 2013. The dataset was then contributed to the GEDI Forest Structure and Biomass Database (FSBD).The data were collected with the Leica ALS50 and ALS70 instrument at 900 m above ground level.The data is in LAS format and contains a point cloud of lidar returns.The usa_stanley airborne lidar dataset was collected by the Stanley project in Idaho, USA during 2010. The dataset was then contributed to the GEDI Forest Structure and Biomass Database (FSBD). The data was collected at 900 m above ground level. The data is in LAS format and contains a point cloud of lidar returns.The usa_stjoe airborne lidar dataset was collected by the StJoe project in Idaho, USA during 2003. The dataset was then contributed to the GEDI Forest Structure and Biomass Database (FSBD). The data was collected with the Leica ALS40 instrument at 2438 m above ground level. The data is in LAS format and contains a point cloud of lidar returns.The usa_tepeecreek airborne lidar dataset was collected by the TepeeCreek project in Idaho, USA during 2011. The dataset was then contributed to the GEDI Forest Structure and Biomass Database (FSBD). The data was collected at 1450 m above ground level. The data is in LAS format and contains a point cloud of lidar returns.The usa_upperlolo airborne lidar dataset was collected by the UpperLolo project in Idaho, USA during 2006. The dataset was then contributed to the GEDI Forest Structure and Biomass Database (FSBD). The data was collected at 1100 m above ground level. The data is in LAS format and contains a point cloud of lidar returns.",
+  "extent": {
+    "spatial": {
+      "bbox": [
+        [
+          -85.3121431,
+          9.1557835,
+          -79.846044,
+          9.1274357
+        ],
+        [
+          -88.5533271,
+          46.6775162,
+          -88.4704196,
+          46.6076283
+        ],
+        [
+          -115.8458579,
+          45.271288,
+          -115.6760494,
+          44.6299228
+        ],
+        [
+          -116.8360319,
+          48.3745398,
+          -116.7375511,
+          48.3440162
+        ],
+        [
+          -116.4114544,
+          47.8405382,
+          -116.1978039,
+          47.7426007
+        ],
+        [
+          -115.7402841,
+          46.4369485,
+          -115.5648893,
+          46.3155705
+        ],
+        [
+          -123.4971471,
+          38.8005092,
+          -122.4711968,
+          38.2240142
+        ],
+        [
+          -122.4348301,
+          36.9804709,
+          -119.0221486,
+          36.8508176
+        ],
+        [
+          -115.7605506,
+          45.0384903,
+          -115.736248,
+          44.9979642
+        ],
+        [
+          -116.6695944,
+          47.8380691,
+          -116.189556,
+          47.6349606
+        ],
+        [
+          -116.9861954,
+          46.8653832,
+          -116.6481306,
+          46.7700198
+        ],
+        [
+          -116.1911687,
+          45.7158832,
+          -115.9755629,
+          45.4942469
+        ],
+        [
+          -116.5511833,
+          47.7487417,
+          -116.4851769,
+          47.7199618
+        ],
+        [
+          142.3844159,
+          -25.4003433,
+          147.6189914,
+          -25.7895408
+        ],
+        [
+          -115.8361112,
+          46.1023891,
+          -115.6613919,
+          45.9403881
+        ],
+        [
+          -116.3522009,
+          47.2886779,
+          -116.0289725,
+          47.1331918
+        ],
+        [
+          -116.8478416,
+          48.3746815,
+          -116.7352503,
+          48.3361686
+        ],
+        [
+          -119.1464948,
+          44.2509373,
+          -118.9489381,
+          44.0783967
+        ],
+        [
+          -115.1613612,
+          44.3453846,
+          -115.0242097,
+          44.2645588
+        ],
+        [
+          145.6299423,
+          -17.1178027,
+          145.6346743,
+          -17.1223529
+        ],
+        [
+          -115.8264022,
+          46.6482542,
+          -114.3722411,
+          45.6475094
+        ],
+        [
+          11.4235832,
+          46.0038111,
+          11.4271766,
+          46.0012677
+        ],
+        [
+          9.3157507,
+          0.6173897,
+          9.4229706,
+          0.5382093
+        ],
+        [
+          111.2892479,
+          -30.0833467,
+          155.7179351,
+          -43.1031025
+        ]
+      ]
+    },
+    "temporal": {
+      "interval": [
+        [
+          "2001-01-01T00:00:00.000Z",
+          "2016-02-02T00:00:00.000Z"
+        ]
+      ]
+    }
+  },
+  "links": [],
+  "dashboard:is_periodic": false,
+  "dashboard:time_density": null,
+  "assets": {}
+}

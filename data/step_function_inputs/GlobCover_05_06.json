@@ -1,0 +1,12 @@
+{
+  "queue_messages": "true",
+  "collection": "GlobCover_05_06",
+  "version": "2.2",
+  "discovery": "cmr",
+  "mode": "cmr",
+  "asset_name": "data",
+  "asset_roles": [
+    "data"
+  ],
+  "cmr_api_url": "https://cmr.maap-project.org"
+}
