@@ -1,19 +1,18 @@
-import os
 import json
-import geojson
-from pathlib import Path
-import requests
+import os
 from functools import singledispatch
+from pathlib import Path
 
+import geojson
 import pystac
 import rasterio
-
+import requests
 from cmr import GranuleQuery
 from pystac.utils import str_to_datetime
-from rio_stac import stac
 from rasterio.session import AWSSession
+from rio_stac import stac
 
-from . import regex, events, role
+from . import events, regex, role
 
 
 def create_item(
@@ -36,7 +35,7 @@ def create_item(
 
     def create_item_item():
         stac_item = pystac.Item(
-            id=Path(item_url).stem,
+            id=id,
             geometry=geometry,
             properties=properties,
             href=item_url,
@@ -54,7 +53,7 @@ def create_item(
             # `stac.create_stac_item` tries to opon a dataset with rasterio.
             # if that fails (since not all items are rasterio-readable), fall back to pystac.Item
             return stac.create_stac_item(
-                id=Path(item_url).stem,
+                id=id,
                 source=item_url,
                 collection=collection,
                 input_datetime=datetime,
@@ -197,7 +196,7 @@ def gen_asset(role: str, link: dict, item: dict) -> pystac.Asset:
     # Fallback to asset_media_type defined in the item
     if asset_media_type == None and role == "data":
         asset_media_type = item.asset_media_type
-        
+
     return pystac.Asset(
         roles=[role], href=link.get("href"), media_type=asset_media_type
     )
@@ -238,6 +237,10 @@ def get_assets_from_cmr(cmr_json, item) -> dict[pystac.Asset]:
             asset = gen_asset("documentation", link, item)
             if asset:
                 assets["documentation"] = asset
+
+    if None not in item.assets:
+        del assets["data"]
+        return dict(sorted({**item.assets, **assets}.items()))
     return assets
 
 
@@ -260,11 +263,16 @@ def generate_stac_cmrevent(item: events.CmrEvent) -> pystac.Item:
         .get(1)[0]
     )
     cmr_json["concept_id"] = cmr_json.pop("id")
+
+    if item.product_id:
+        cmr_json["title"] = item.product_id
+
     geometry = generate_geometry_from_cmr(cmr_json, item)
     if geometry:
         bbox = get_bbox(list(geojson.utils.coords(geometry["coordinates"])))
     else:
         bbox = None
+
     assets = get_assets_from_cmr(cmr_json, item)
 
     return create_item(
