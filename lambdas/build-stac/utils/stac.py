@@ -238,9 +238,11 @@ def get_assets_from_cmr(cmr_json, item) -> dict[pystac.Asset]:
             if asset:
                 assets["documentation"] = asset
 
-    if None not in item.assets:
+    if item.assets:
         del assets["data"]
-        return dict(sorted({**item.assets, **assets}.items()))
+        pystac_asset = lambda link: pystac.Asset(roles=["data"], href=link)
+        pystac_assets = {key: pystac_asset(value) for key, value in item.assets.items()}
+        return dict(sorted({**pystac_assets, **assets}.items()))
     return assets
 
 

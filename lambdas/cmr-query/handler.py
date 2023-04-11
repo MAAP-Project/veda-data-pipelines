@@ -4,7 +4,6 @@ import os
 import re
 from typing import Any, Dict, List
 
-import pystac
 import requests
 
 
@@ -13,7 +12,7 @@ def multi_asset_items(
 ) -> List[Dict[str, Any]]:
     """
     Returns a list of file_obj's with the added "assets" key:value where "assets"
-    is a Dict[str, pystac.Asset] used to add item assets to a STAC item
+    is a Dict[str, str] used to add item assets to a STAC item
 
     Parameters:
         data_file: str
@@ -57,9 +56,9 @@ def multi_asset_items(
             'asset_roles': ['data'],
             'asset_media_type': 'application/x-hdr',
             'assets': {
-                'cov_1-1.bin': <Asset href=s3://nasa-maap-data-store/file-staging/nasa-map/AfriSAR_UAVSAR_Ungeocoded_Covariance___1/uavsar_AfriSAR_v1-cov_coreg_fine_hsixty_14050_16015_140_009_160308_cov_1-1.bin>,
-                'cov_1-1.hdr': <Asset href=s3://nasa-maap-data-store/file-staging/nasa-map/AfriSAR_UAVSAR_Ungeocoded_Covariance___1/uavsar_AfriSAR_v1-cov_coreg_fine_hsixty_14050_16015_140_009_160308_cov_1-1.hdr>,
-                'cov_1-2.bin': <Asset href=s3://nasa-maap-data-store/file-staging/nasa-map/AfriSAR_UAVSAR_Ungeocoded_Covariance___1/uavsar_AfriSAR_v1-cov_coreg_fine_hsixty_14050_16015_140_009_160308_cov_1-2.bin>,
+                'cov_1-1.bin': 's3://nasa-maap-data-store/file-staging/nasa-map/AfriSAR_UAVSAR_Ungeocoded_Covariance___1/uavsar_AfriSAR_v1-cov_coreg_fine_hsixty_14050_16015_140_009_160308_cov_1-1.bin',
+                'cov_1-1.hdr': 's3://nasa-maap-data-store/file-staging/nasa-map/AfriSAR_UAVSAR_Ungeocoded_Covariance___1/uavsar_AfriSAR_v1-cov_coreg_fine_hsixty_14050_16015_140_009_160308_cov_1-1.hdr',
+                'cov_1-2.bin': 's3://nasa-maap-data-store/file-staging/nasa-map/AfriSAR_UAVSAR_Ungeocoded_Covariance___1/uavsar_AfriSAR_v1-cov_coreg_fine_hsixty_14050_16015_140_009_160308_cov_1-2.bin',
                 ...,
             }
             'product_id': 'uavsar_AfriSAR_v1-cov_coreg_fine_hsixty_14050_16015_140_009_160308'
@@ -72,7 +71,7 @@ def multi_asset_items(
     def _get_asset_name(remote_fileurl: str, product_id: str) -> str:
         return re.sub(f".*{product_id}[-_.]?", "", remote_fileurl)
 
-    # Creates a Dict[product_id, Dict[file_name, List[pystac.Asset]]]
+    # Creates a Dict[product_id, Dict[file_name, List[str]]]
     for item in data:
         match = re.search(fileurls_pattern, item["remote_fileurl"])
         if match:
@@ -81,10 +80,7 @@ def multi_asset_items(
 
             product_ids[product_id][
                 _get_asset_name(item["remote_fileurl"], product_id)
-            ] = pystac.Asset(
-                href=item["remote_fileurl"],
-                roles=item["asset_roles"],
-            )
+            ] = item["remote_fileurl"]
 
     # Creates an objects Dict of modified file_obj's, adding file_obj["assets"]
     for product_id in product_ids.keys():
@@ -207,4 +203,4 @@ if __name__ == "__main__":
         "data_file_regex": "uavsar_AfriSAR_v1-.*.{5}_.{5}_.{3}_.{3}_.{6}_kz",
     }
 
-    handler(sample_event, {})
+    print(json.dumps(handler(sample_event, {}), indent=4))

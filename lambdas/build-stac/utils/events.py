@@ -18,7 +18,7 @@ class BaseEvent(BaseModel, frozen=True, arbitrary_types_allowed=True):
     asset_name: Optional[str] = None
     asset_roles: Optional[List[str]] = None
     asset_media_type: Optional[Union[str, pystac.MediaType]] = None
-    assets: Optional[Dict[str, pystac.Asset]] = (None,)
+    assets: Optional[Dict[str, str]] = None
     mode: Optional[str] = None
     test_links: Optional[bool] = False
     reverse_coords: Optional[bool]
