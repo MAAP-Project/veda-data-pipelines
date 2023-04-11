@@ -30,7 +30,7 @@ def multi_asset_items(
     Example:
         multi_asset_items(
             "cov_1-1.hdr".
-            "uavsar_AfriSAR_v1-.*_\d{5}_\d{5}_\d{3}_\d{3}_\d{6}",
+            "uavsar_AfriSAR_v1-.*_.{5}_.{5}_.{3}_.{3}_.{6}",
             {
                 'collection': 'AfriSAR_UAVSAR_Ungeocoded_Covariance',
                 'remote_fileurl': 's3://nasa-maap-data-store/file-staging/nasa-map/AfriSAR_UAVSAR_Ungeocoded_Covariance___1/uavsar_AfriSAR_v1-cov_topo_a41_r9_localPsi.rdr',
@@ -70,7 +70,7 @@ def multi_asset_items(
     product_ids = {}
 
     def _get_asset_name(remote_fileurl: str, product_id: str) -> str:
-        return re.sub(f".*{product_id}[-_]?", "", remote_fileurl)
+        return re.sub(f".*{product_id}[-_.]?", "", remote_fileurl)
 
     # Creates a Dict[product_id, Dict[file_name, List[pystac.Asset]]]
     for item in data:
@@ -195,16 +195,16 @@ def handler(event, context):
 if __name__ == "__main__":
     sample_event = {
         "queue_messages": "true",
-        "collection": "AfriSAR_UAVSAR_Ungeocoded_Covariance",
+        "collection": "AfriSAR_UAVSAR_KZ",
         "version": "1",
         "discovery": "cmr",
-        "temporal": ["2016-03-08T00:00:00Z", "2016-03-08T00:00:00Z"],
+        "temporal": ["2016-02-25T00:00:00Z", "2016-03-08T00:00:00Z"],
         "mode": "cmr",
         "asset_name": "data",
         "asset_roles": ["data"],
         "asset_media_type": "application/x-hdr",
-        "data_file": "cov_1-1.hdr",
-        "data_file_regex": "uavsar_AfriSAR_v1-.*_\d{5}_\d{5}_\d{3}_\d{3}_\d{6}",
+        "data_file": "hdr",
+        "data_file_regex": "uavsar_AfriSAR_v1-.*.{5}_.{5}_.{3}_.{3}_.{6}_kz",
     }
 
     handler(sample_event, {})
