@@ -25,13 +25,7 @@ class BaseEvent(BaseModel, frozen=True, arbitrary_types_allowed=True):
 
     def item_id(self: "BaseEvent") -> str:
         if self.id_regex:
-<<<<<<< HEAD
-            id_components = re.findall(
-                self.id_regex, self.s3_filename
-            )  # TODO: s3_filename
-=======
             id_components = re.findall(self.id_regex, self.remote_fileurl)
->>>>>>> main
             assert len(id_components) == 1
             id = "-".join(id_components[0])
         elif self.product_id:
