@@ -48,14 +48,8 @@ def s3_created_bucket(s3_resource, mock_environment) -> Bucket:
 @pytest.fixture
 def sample_assets():
     return {
-        "cov_1-1.hdr": pystac.Asset(
-            href="s3://nasa-maap-data-store/file-staging/nasa-map/AfriSAR_UAVSAR_Ungeocoded_Covariance___1/uavsar_AfriSAR_v1-cov_coreg_fine_eighty_14047_16008_140_006_160225_cov_1-1.hdr",
-            roles=["data"],
-        ),
-        "cov_1-1.bin": pystac.Asset(
-            href="s3://nasa-maap-data-store/file-staging/nasa-map/AfriSAR_UAVSAR_Ungeocoded_Covariance___1/uavsar_AfriSAR_v1-cov_coreg_fine_eighty_14047_16008_140_006_160225_cov_1-1.bin",
-            roles=["data"],
-        ),
+        "cov_1-1.hdr": "s3://nasa-maap-data-store/file-staging/nasa-map/AfriSAR_UAVSAR_Ungeocoded_Covariance___1/uavsar_AfriSAR_v1-cov_coreg_fine_eighty_14047_16008_140_006_160225_cov_1-1.hdr",
+        "cov_1-1.bin": "s3://nasa-maap-data-store/file-staging/nasa-map/AfriSAR_UAVSAR_Ungeocoded_Covariance___1/uavsar_AfriSAR_v1-cov_coreg_fine_eighty_14047_16008_140_006_160225_cov_1-1.bin",
     }
 
 
