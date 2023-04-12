@@ -10,6 +10,7 @@ import smart_open
 
 from utils import stac, events
 
+AVAILABLE_STACTOOLS_MODULES = ["nisar_sim"] # update requirements.txt if this is updated.
 
 class S3LinkOutput(TypedDict):
     stac_file_url: str
@@ -36,29 +37,28 @@ def handler(event: Dict[str, Any], context) -> Union[S3LinkOutput, StacItemOutpu
             "collection": "OMDOAO3e",
             "remote_fileurl": "s3://climatedashboard-data/OMSO2PCA/OMSO2PCA_LUT_SCD_2005.tif",
         }
-        Format option 3 (with stactools package) where : 
-            - link-to-repo is in the format accepted by `pip install`
-            - import-string represents the module that can be imported with `importlib` and contains a `create_item` function building a STAC item. 
+        Format option 3 (with stactools package) where stactools-module represents the module of the stactools package to use. The package must comply with https://github.com/stactools-packages/template and be installed in the instance executing this code. 
         {
-            "stactools-package": "<link-to-repo>::<import-string>"
-            " ... additional keys corresponding to that package's create_item method arguments"
+            "collection" : "NISAR",
+            "stactools-module": "<stactools-module",
+            " ... additional keys corresponding to the module's `create_item` method arguments"
         }
 
         example : 
 
         {
-            "stactools-package": "git+https://github.com/developmentseed/cop-dem.git@feat/collection::stactools.cop_dem.stac"
-            "href": "some-ref",
-            "host" : "some-host",
+            "collection": "NISAR",
+            "stactools-package": "nisar_sim",
+            "source":"tests/data-files/winnip_31604_12061_004_120717_L090_CX_07",
+            "dither": "X"
         }
 
 
     """
 
     if "stactools-package" in event:
-        repo_url, module_str = event.pop("stactools-package").split("::")
-        subprocess.run([sys.executable, "-m", "pip", "install", repo_url])
-        stac_module = importlib.import_module(module_str)
+        module_str = event.pop("stactools-module")
+        stac_module = importlib.import_module(f'stactools.{module_str}.stac')
         stac_item = stac_module.create_item(event)
     else:
         EventType = events.CmrEvent if event.get("granule_id") else events.RegexEvent
@@ -95,7 +95,7 @@ if __name__ == "__main__":
 
     sample_event = {
         "collection": "NISAR",
-        "stactools-package": "git+https://github.com/MAAP-Project/nisar-sim.git@feat/nisar-sim-stactools::stactools.nisar_sim.stac",
+        "stactools-package": "nisar_sim",
         "source":"tests/data-files/winnip_31604_12061_004_120717_L090_CX_07",
         "dither": "X"
     }

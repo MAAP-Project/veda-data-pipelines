@@ -9,3 +9,4 @@ shapely
 smart-open
 pydantic==1.9.1
 geojson==2.5.0
+git+https://github.com/MAAP-Project/nisar-sim.git@26dd4bb1f25180093551f63d00162891a4abe5bc
