@@ -56,8 +56,9 @@ def handler(event: Dict[str, Any], context) -> Union[S3LinkOutput, StacItemOutpu
 
     """
 
-    if "stactools-package" in event:
+    if "stactools-module" in event:
         module_str = event.pop("stactools-module")
+        assert module_str in AVAILABLE_STACTOOLS_MODULES
         stac_module = importlib.import_module(f'stactools.{module_str}.stac')
         stac_item = stac_module.create_item(event)
     else:
@@ -80,6 +81,7 @@ def handler(event: Dict[str, Any], context) -> Union[S3LinkOutput, StacItemOutpu
 
 
 if __name__ == "__main__":
+    
     # sample_event = {
     #     "collection": "GEDI02_A",
     #     "remote_fileurl": "s3://nasa-maap-data-store/file-staging/nasa-map/GEDI02_A___002/2020.12.31/GEDI02_A_2020366232302_O11636_02_T08595_02_003_02_V002.h5",
@@ -95,7 +97,7 @@ if __name__ == "__main__":
 
     sample_event = {
         "collection": "NISAR",
-        "stactools-package": "nisar_sim",
+        "stactools-module": "nisar_sim",
         "source":"tests/data-files/winnip_31604_12061_004_120717_L090_CX_07",
         "dither": "X"
     }
