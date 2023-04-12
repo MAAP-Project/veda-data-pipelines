@@ -2,7 +2,7 @@ import json
 import os
 import importlib
 import subprocess
-import sys 
+import sys
 from typing import Any, Dict, TypedDict, Union
 from uuid import uuid4
 
@@ -10,7 +10,10 @@ import smart_open
 
 from utils import stac, events
 
-AVAILABLE_STACTOOLS_MODULES = ["nisar_sim"] # update requirements.txt if this is updated.
+AVAILABLE_STACTOOLS_MODULES = [
+    "nisar_sim"
+]  # update requirements.txt if this is updated.
+
 
 class S3LinkOutput(TypedDict):
     stac_file_url: str
@@ -37,14 +40,14 @@ def handler(event: Dict[str, Any], context) -> Union[S3LinkOutput, StacItemOutpu
             "collection": "OMDOAO3e",
             "remote_fileurl": "s3://climatedashboard-data/OMSO2PCA/OMSO2PCA_LUT_SCD_2005.tif",
         }
-        Format option 3 (with stactools package) where stactools-module represents the module of the stactools package to use. The package must comply with https://github.com/stactools-packages/template and be installed in the instance executing this code. 
+        Format option 3 (with stactools package) where stactools-module represents the module of the stactools package to use. The package must comply with https://github.com/stactools-packages/template and be installed in the instance executing this code.
         {
             "collection" : "NISAR",
             "stactools-module": "<stactools-module",
             " ... additional keys corresponding to the module's `create_item` method arguments"
         }
 
-        example : 
+        example :
 
         {
             "collection": "NISAR",
@@ -59,7 +62,7 @@ def handler(event: Dict[str, Any], context) -> Union[S3LinkOutput, StacItemOutpu
     if "stactools-module" in event:
         module_str = event.pop("stactools-module")
         assert module_str in AVAILABLE_STACTOOLS_MODULES
-        stac_module = importlib.import_module(f'stactools.{module_str}.stac')
+        stac_module = importlib.import_module(f"stactools.{module_str}.stac")
         stac_item = stac_module.create_item(event)
     else:
         EventType = events.CmrEvent if event.get("granule_id") else events.RegexEvent
@@ -81,7 +84,6 @@ def handler(event: Dict[str, Any], context) -> Union[S3LinkOutput, StacItemOutpu
 
 
 if __name__ == "__main__":
-    
     # sample_event = {
     #     "collection": "GEDI02_A",
     #     "remote_fileurl": "s3://nasa-maap-data-store/file-staging/nasa-map/GEDI02_A___002/2020.12.31/GEDI02_A_2020366232302_O11636_02_T08595_02_003_02_V002.h5",
@@ -98,8 +100,8 @@ if __name__ == "__main__":
     sample_event = {
         "collection": "NISAR",
         "stactools-module": "nisar_sim",
-        "source":"tests/data-files/winnip_31604_12061_004_120717_L090_CX_07",
-        "dither": "X"
+        "source": "tests/data-files/winnip_31604_12061_004_120717_L090_CX_07",
+        "dither": "X",
     }
 
     print(json.dumps(handler(sample_event, {}), indent=2))
