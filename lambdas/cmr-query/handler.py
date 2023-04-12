@@ -8,11 +8,11 @@ import requests
 
 
 def multi_asset_items(
-    data_file: str, data_file_regex: str, data: Dict[str, Any]
+    data_file: str, data_file_regex: str, data: List[Dict[str, Any]]
 ) -> List[Dict[str, Any]]:
     """
     Returns a list of file_obj's with the added "assets" key:value where "assets"
-    is a Dict[str, str] used to add item assets to a STAC item
+    is a Dict[str, Any] used to add item assets to a STAC item
 
     Parameters:
         data_file: str
@@ -21,48 +21,52 @@ def multi_asset_items(
             string value becomes a regex pattern to find all related data file urls,
             commonly a product ID or other identifier shared amongst product files
         data: List[Dict[str, Any]]
-            dictionary of file_obj's generated from querying CMR
+            A list of dictionary file_obj's generated from querying CMR
     Return:
         objects: List[Dict[str, Any]]
-            modified dictionary of passed in file_obj's, used to generate STAC items
+            A list of modified file_obj dictionaries, used to generate STAC items
 
     Example:
         multi_asset_items(
             "cov_1-1.hdr".
             "uavsar_AfriSAR_v1-.*_.{5}_.{5}_.{3}_.{3}_.{6}",
+            [
+                {
+                    'collection': 'AfriSAR_UAVSAR_Ungeocoded_Covariance',
+                    'remote_fileurl': 's3://nasa-maap-data-store/file-staging/nasa-map/AfriSAR_UAVSAR_Ungeocoded_Covariance___1/uavsar_AfriSAR_v1-cov_topo_a41_r9_localPsi.rdr',
+                    'granule_id': 'G1200110696-NASA_MAAP',
+                    'id': 'G1200110696-NASA_MAAP',
+                    'mode': 'cmr',
+                    'test_links': None,
+                    'reverse_coords': None,
+                    'asset_name': 'data',
+                    'asset_roles': ['data'],
+                    'asset_media_type': 'application/x-hdr'
+                }
+            ]
+        )
+        Returns:
+        [
             {
                 'collection': 'AfriSAR_UAVSAR_Ungeocoded_Covariance',
-                'remote_fileurl': 's3://nasa-maap-data-store/file-staging/nasa-map/AfriSAR_UAVSAR_Ungeocoded_Covariance___1/uavsar_AfriSAR_v1-cov_topo_a41_r9_localPsi.rdr',
-                'granule_id': 'G1200110696-NASA_MAAP',
-                'id': 'G1200110696-NASA_MAAP',
+                'remote_fileurl': 's3://nasa-maap-data-store/file-staging/nasa-map/AfriSAR_UAVSAR_Ungeocoded_Covariance___1/uavsar_AfriSAR_v1-cov_coreg_fine_hsixty_14050_16015_140_009_160308_cov_1-1.hdr',
+                'granule_id': 'G1200109928-NASA_MAAP',
+                'id': 'G1200109928-NASA_MAAP',
                 'mode': 'cmr',
                 'test_links': None,
                 'reverse_coords': None,
                 'asset_name': 'data',
                 'asset_roles': ['data'],
-                'asset_media_type': 'application/x-hdr'
+                'asset_media_type': 'application/x-hdr',
+                'assets': {
+                    'cov_1-1.bin': 's3://nasa-maap-data-store/file-staging/nasa-map/AfriSAR_UAVSAR_Ungeocoded_Covariance___1/uavsar_AfriSAR_v1-cov_coreg_fine_hsixty_14050_16015_140_009_160308_cov_1-1.bin',
+                    'cov_1-1.hdr': 's3://nasa-maap-data-store/file-staging/nasa-map/AfriSAR_UAVSAR_Ungeocoded_Covariance___1/uavsar_AfriSAR_v1-cov_coreg_fine_hsixty_14050_16015_140_009_160308_cov_1-1.hdr',
+                    'cov_1-2.bin': 's3://nasa-maap-data-store/file-staging/nasa-map/AfriSAR_UAVSAR_Ungeocoded_Covariance___1/uavsar_AfriSAR_v1-cov_coreg_fine_hsixty_14050_16015_140_009_160308_cov_1-2.bin',
+                    ...,
+                }
+                'product_id': 'uavsar_AfriSAR_v1-cov_coreg_fine_hsixty_14050_16015_140_009_160308'
             }
-        )
-        Returns:
-        {
-            'collection': 'AfriSAR_UAVSAR_Ungeocoded_Covariance',
-            'remote_fileurl': 's3://nasa-maap-data-store/file-staging/nasa-map/AfriSAR_UAVSAR_Ungeocoded_Covariance___1/uavsar_AfriSAR_v1-cov_coreg_fine_hsixty_14050_16015_140_009_160308_cov_1-1.hdr',
-            'granule_id': 'G1200109928-NASA_MAAP',
-            'id': 'G1200109928-NASA_MAAP',
-            'mode': 'cmr',
-            'test_links': None,
-            'reverse_coords': None,
-            'asset_name': 'data',
-            'asset_roles': ['data'],
-            'asset_media_type': 'application/x-hdr',
-            'assets': {
-                'cov_1-1.bin': 's3://nasa-maap-data-store/file-staging/nasa-map/AfriSAR_UAVSAR_Ungeocoded_Covariance___1/uavsar_AfriSAR_v1-cov_coreg_fine_hsixty_14050_16015_140_009_160308_cov_1-1.bin',
-                'cov_1-1.hdr': 's3://nasa-maap-data-store/file-staging/nasa-map/AfriSAR_UAVSAR_Ungeocoded_Covariance___1/uavsar_AfriSAR_v1-cov_coreg_fine_hsixty_14050_16015_140_009_160308_cov_1-1.hdr',
-                'cov_1-2.bin': 's3://nasa-maap-data-store/file-staging/nasa-map/AfriSAR_UAVSAR_Ungeocoded_Covariance___1/uavsar_AfriSAR_v1-cov_coreg_fine_hsixty_14050_16015_140_009_160308_cov_1-2.bin',
-                ...,
-            }
-            'product_id': 'uavsar_AfriSAR_v1-cov_coreg_fine_hsixty_14050_16015_140_009_160308'
-        }
+        ]
     """
     fileurls_pattern = re.compile(data_file_regex)
     objects = []
@@ -203,4 +207,4 @@ if __name__ == "__main__":
         "data_file_regex": "uavsar_AfriSAR_v1-.*.{5}_.{5}_.{3}_.{3}_.{6}_kz",
     }
 
-    print(json.dumps(handler(sample_event, {}), indent=4))
+    handler(sample_event, {})

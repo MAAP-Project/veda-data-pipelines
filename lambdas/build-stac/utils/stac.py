@@ -44,6 +44,7 @@ def create_item(
             bbox=bbox,
         )
         stac_item.assets = assets
+        print(type(stac_item))
         return stac_item
 
     def create_stac_item():

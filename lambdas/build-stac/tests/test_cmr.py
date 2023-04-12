@@ -13,8 +13,8 @@ def test_generate_stac_cmrevent(
             mock_get_assets.return_value = sample_assets
             result = generate_stac_cmrevent(cmr_multi_asset_sample_event)
 
-            assert len(result.assets) == 2
+            assert len(result.assets) == 3
             assert (
                 result.id
-                == "uavsar_AfriSAR_v1-cov_coreg_fine_hsixty_14050_16015_140_009_160308"
+                == "uavsar_AfriSAR_v1-coreg_fine_lopenp_14043_16008_140_009_160225_kz"
             )

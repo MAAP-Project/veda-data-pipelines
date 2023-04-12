@@ -55,19 +55,19 @@ def handler(event: Dict[str, Any], context) -> Union[S3LinkOutput, StacItemOutpu
 
 
 if __name__ == "__main__":
-    # sample_event = {
-    #     "collection": "GEDI02_A",
-    #     "remote_fileurl": "s3://nasa-maap-data-store/file-staging/nasa-map/GEDI02_A___002/2020.12.31/GEDI02_A_2020366232302_O11636_02_T08595_02_003_02_V002.h5",
-    #     "granule_id": "G1201782029-NASA_MAAP",
-    #     "id": "G1201782029-NASA_MAAP",
-    #     "mode": "cmr",
-    #     "test_links": None,
-    #     "reverse_coords": None,
-    #     "asset_name": "data",
-    #     "asset_roles": ["data"],
-    #     "asset_media_type": "application/x-hdf5",
-    # }
-    # print(json.dumps(handler(sample_event, {}), indent=2))
+    sample_event = {
+        "collection": "GEDI02_A",
+        "remote_fileurl": "s3://nasa-maap-data-store/file-staging/nasa-map/GEDI02_A___002/2020.12.31/GEDI02_A_2020366232302_O11636_02_T08595_02_003_02_V002.h5",
+        "granule_id": "G1201782029-NASA_MAAP",
+        "id": "G1201782029-NASA_MAAP",
+        "mode": "cmr",
+        "test_links": None,
+        "reverse_coords": None,
+        "asset_name": "data",
+        "asset_roles": ["data"],
+        "asset_media_type": "application/x-hdf5",
+    }
+    print(json.dumps(handler(sample_event, {}), indent=2))
 
     asset_event = {
         "collection": "AfriSAR_UAVSAR_KZ",
@@ -87,5 +87,4 @@ if __name__ == "__main__":
         },
         "product_id": "uavsar_AfriSAR_v1-coreg_fine_lopenp_14043_16008_140_009_160225_kz",
     }
-
     print(json.dumps(handler(asset_event, {}), indent=2))
