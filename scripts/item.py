@@ -2,7 +2,7 @@ import json
 import boto3
 
 from dotenv import load_dotenv
-from .utils import args_handler, get_items, get_sf_ingestion_arn
+from .utils import args_handler, get_items, get_sf_ingestion_arn, get_collection_statemachine_name
 
 
 def insert_items(files):
@@ -15,9 +15,13 @@ def insert_items(files):
 
         sf_client = boto3.client("stepfunctions")
         sf_arn = get_sf_ingestion_arn()
+        
+        for event in events:
+            assert 'collection' in event 
+        
         for event in events:
             response = sf_client.start_execution(
-                stateMachineArn=sf_arn, input=json.dumps(event)
+                stateMachineArn=sf_arn, input=json.dumps(event), name=get_collection_statemachine_name(event['collection'])
             )
             print(response)
 

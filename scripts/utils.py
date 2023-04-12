@@ -4,7 +4,7 @@ import glob
 import os
 import base64
 import json
-
+import datetime
 import boto3
 
 DATA_PATH = os.path.join(os.path.dirname(os.path.realpath(__file__)), "..", "data")
@@ -77,3 +77,8 @@ def get_sf_ingestion_arn():
     APP_NAME = os.environ.get("APP_NAME")
     ENV = os.environ.get("ENV", "dev")
     return f"arn:aws:states:{REGION}:{ACCOUNT_ID}:stateMachine:{APP_NAME}-{ENV}-stepfunction-discover"
+
+def get_collection_statemachine_name(collection: str) -> str:
+
+    timestamp = datetime.datetime.utcnow().strftime("%Y%m%d%H%M%S")
+    return f'{collection}-{timestamp}'
