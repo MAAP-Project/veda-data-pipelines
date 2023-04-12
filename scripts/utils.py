@@ -78,7 +78,7 @@ def get_sf_ingestion_arn():
     ENV = os.environ.get("ENV", "dev")
     return f"arn:aws:states:{REGION}:{ACCOUNT_ID}:stateMachine:{APP_NAME}-{ENV}-stepfunction-discover"
 
-def get_collection_statemachine_name(collection: str) -> str:
 
+def get_collection_statemachine_name(collection: str) -> str:
     timestamp = datetime.datetime.utcnow().strftime("%Y%m%d%H%M%S")
-    return f'{collection}-{timestamp}'
+    return f"{collection}-{timestamp}"
