@@ -79,7 +79,11 @@ if __name__ == "__main__":
         "reverse_coords": None,
         "asset_name": "data",
         "asset_roles": ["data"],
-        "asset_media_type": "application/x-hdr",
+        "asset_media_type": {
+            "vrt": "application/octet-stream",
+            "bin": "binary/octet-stream",
+            "hdr": "binary/octet-stream",
+        },
         "assets": {
             "bin": "s3://nasa-maap-data-store/file-staging/nasa-map/AfriSAR_UAVSAR_KZ___1/uavsar_AfriSAR_v1-coreg_fine_lopenp_14043_16008_140_009_160225_kz.bin",
             "hdr": "s3://nasa-maap-data-store/file-staging/nasa-map/AfriSAR_UAVSAR_KZ___1/uavsar_AfriSAR_v1-coreg_fine_lopenp_14043_16008_140_009_160225_kz.hdr",

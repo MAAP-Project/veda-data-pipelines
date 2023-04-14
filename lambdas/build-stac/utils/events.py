@@ -17,7 +17,7 @@ class BaseEvent(BaseModel, frozen=True, arbitrary_types_allowed=True):
     id_regex: Optional[str] = None
     asset_name: Optional[str] = None
     asset_roles: Optional[List[str]] = None
-    asset_media_type: Optional[Union[str, pystac.MediaType]] = None
+    asset_media_type: Optional[Union[str, dict, pystac.MediaType]] = None
     assets: Optional[Dict[str, str]] = None
     mode: Optional[str] = None
     test_links: Optional[bool] = False

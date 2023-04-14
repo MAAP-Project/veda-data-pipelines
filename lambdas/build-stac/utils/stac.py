@@ -2,6 +2,7 @@ import json
 import os
 from functools import singledispatch
 from pathlib import Path
+from typing import Union
 
 import geojson
 import pystac
@@ -44,7 +45,6 @@ def create_item(
             bbox=bbox,
         )
         stac_item.assets = assets
-        print(type(stac_item))
         return stac_item
 
     def create_stac_item():
@@ -186,6 +186,14 @@ def generate_geometry_from_cmr(cmr_json, item) -> dict:
         return None
 
 
+def _content_type(link: str, asset_media_type: Union[str, dict]) -> str:
+    if isinstance(asset_media_type, dict):
+        file = Path(link)
+        return asset_media_type.get(file.suffix, asset_media_type.get(file.suffix[1:]))
+    else:
+        return asset_media_type
+
+
 def gen_asset(role: str, link: dict, item: dict) -> pystac.Asset:
     if item.test_links and "http" in link.get("href"):
         try:
@@ -241,7 +249,11 @@ def get_assets_from_cmr(cmr_json, item) -> dict[pystac.Asset]:
 
     if item.assets:
         del assets["data"]
-        pystac_asset = lambda link: pystac.Asset(roles=["data"], href=link)
+        pystac_asset = lambda link: pystac.Asset(
+            roles=["data"],
+            href=link,
+            media_type=_content_type(link, item.asset_media_type),
+        )
         pystac_assets = {key: pystac_asset(value) for key, value in item.assets.items()}
         return dict(sorted({**pystac_assets, **assets}.items()))
     return assets

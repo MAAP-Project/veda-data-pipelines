@@ -182,8 +182,6 @@ def handler(event, context):
     else:
         output = granules_to_insert
 
-    # Useful for testing locally with build-stac/handler.py
-    print(output[0])
     return_obj = {
         **event,
         "cogify": event.get("cogify", False),
@@ -202,9 +200,12 @@ if __name__ == "__main__":
         "mode": "cmr",
         "asset_name": "data",
         "asset_roles": ["data"],
-        "asset_media_type": "application/x-hdr",
+        "asset_media_type": {
+            "vrt": "application/octet-stream",
+            "bin": "binary/octet-stream",
+            "hdr": "binary/octet-stream",
+        },
         "data_file": "hdr",
         "data_file_regex": "uavsar_AfriSAR_v1-.*.{5}_.{5}_.{3}_.{3}_.{6}_kz",
     }
-
-    handler(sample_event, {})
+    print(json.dumps(handler(sample_event, {}), indent=4))
