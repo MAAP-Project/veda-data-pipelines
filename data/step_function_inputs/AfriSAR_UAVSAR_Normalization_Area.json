@@ -8,5 +8,10 @@
   "asset_roles": [
     "data"
   ],
-  "link_rel": "http://esipfed.org/ns/fedsearch/1.1/s3#"
+  "asset_media_type": {
+    "bin": "application/octet-stream",
+    "hdr": "binary/octet-stream"
+  },
+  "data_file": "hdr",
+  "data_file_regex": "uavsar_AfriSAR_v1-normFactor_a41_r9"
 }

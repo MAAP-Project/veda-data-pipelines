@@ -4,9 +4,10 @@
   "version": "1",
   "discovery": "cmr",
   "mode": "cmr",
+  "limit": 330,
   "asset_name": "data",
   "asset_roles": ["data"],
   "asset_media_type": "application/octet-stream",
-  "data_file": "L090HH_CX_01_mag_geo.hdr",
-  "data_file_regex": "AKLAVI_.{5}_.{5}_.{3}_.{6}_.{4}_.{2}_.{2}"
+  "data_file": "hgt.tif",
+  "data_file_regex": ".{6}_.{5}_.{5}_.{3}_.{6}_.{4}_.{2}_.{2}"
 }
