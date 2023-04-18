@@ -1,6 +1,6 @@
 {
     "collection": "icesat2-boreal",
-    "inventory_url": "s3://maap-ops-workspace/shared/lduncanson/DPS_tile_lists/2023/AGB_tindex_master.csv",
+    "inventory_url": "s3://maap-data-store-test/subset-AGB_tindex_master.csv",
     "discovery": "inventory",
-    "upload": true
+    "upload": false
 }
