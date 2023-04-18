@@ -2,5 +2,5 @@
     "collection": "icesat2-boreal",
     "inventory_url": "s3://maap-data-store-test/subset-AGB_tindex_master.csv",
     "discovery": "inventory",
-    "upload": false
+    "upload": true
 }
