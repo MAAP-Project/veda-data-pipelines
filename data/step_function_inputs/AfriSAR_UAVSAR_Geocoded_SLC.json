@@ -7,5 +7,11 @@
   "asset_name": "data",
   "asset_roles": [
     "data"
-  ]
+  ],
+  "asset_media_type": {
+    "bin": "application/octet-stream",
+    "hdr": "binary/octet-stream"
+  },
+  "data_file": "L090HH_CX_01_mag_geo.hdr",
+  "data_file_regex": "uavsar_AfriSAR_v1_.*_.{5}_.{5}_.{3}_.{6}"
 }
