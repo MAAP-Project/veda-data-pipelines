@@ -249,6 +249,9 @@ def get_assets_from_cmr(cmr_json, item) -> dict[pystac.Asset]:
 
     if item.assets:
         del assets["data"]
+        # Quick fix for failing item ingest
+        if assets.get("documentation"):
+            del assets["documentation"]
         pystac_asset = lambda link: pystac.Asset(
             roles=["data"],
             href=link,

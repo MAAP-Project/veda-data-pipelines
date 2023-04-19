@@ -41,7 +41,11 @@ def multi_asset_items(
                     'reverse_coords': None,
                     'asset_name': 'data',
                     'asset_roles': ['data'],
-                    'asset_media_type': 'application/x-hdr'
+                    'asset_media_type': {
+                        'vrt': 'application/octet-stream',
+                        'bin': 'application/octet-stream',
+                        'hdr': 'binary/octet-stream'
+                    },
                 }
             ]
         )
