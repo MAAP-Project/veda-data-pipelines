@@ -1,19 +1,19 @@
-import os
 import json
-import geojson
-from pathlib import Path
-import requests
+import os
 from functools import singledispatch
+from pathlib import Path
+from typing import Union
 
+import geojson
 import pystac
 import rasterio
-
+import requests
 from cmr import GranuleQuery
 from pystac.utils import str_to_datetime
-from rio_stac import stac
 from rasterio.session import AWSSession
+from rio_stac import stac
 
-from . import regex, events, role
+from . import events, regex, role
 
 
 def create_item(
@@ -36,7 +36,7 @@ def create_item(
 
     def create_item_item():
         stac_item = pystac.Item(
-            id=Path(item_url).stem,
+            id=id,
             geometry=geometry,
             properties=properties,
             href=item_url,
@@ -54,7 +54,7 @@ def create_item(
             # `stac.create_stac_item` tries to opon a dataset with rasterio.
             # if that fails (since not all items are rasterio-readable), fall back to pystac.Item
             return stac.create_stac_item(
-                id=Path(item_url).stem,
+                id=id,
                 source=item_url,
                 collection=collection,
                 input_datetime=datetime,
@@ -186,6 +186,14 @@ def generate_geometry_from_cmr(cmr_json, item) -> dict:
         return None
 
 
+def _content_type(link: str, asset_media_type: Union[str, dict]) -> str:
+    if isinstance(asset_media_type, dict):
+        file = Path(link)
+        return asset_media_type.get(file.suffix, asset_media_type.get(file.suffix[1:]))
+    else:
+        return asset_media_type
+
+
 def gen_asset(role: str, link: dict, item: dict) -> pystac.Asset:
     if item.test_links and "http" in link.get("href"):
         try:
@@ -238,6 +246,19 @@ def get_assets_from_cmr(cmr_json, item) -> dict[pystac.Asset]:
             asset = gen_asset("documentation", link, item)
             if asset:
                 assets["documentation"] = asset
+
+    if item.assets:
+        del assets["data"]
+        # Quick fix for failing item ingest
+        if assets.get("documentation"):
+            del assets["documentation"]
+        pystac_asset = lambda link: pystac.Asset(
+            roles=["data"],
+            href=link,
+            media_type=_content_type(link, item.asset_media_type),
+        )
+        pystac_assets = {key: pystac_asset(value) for key, value in item.assets.items()}
+        return dict(sorted({**pystac_assets, **assets}.items()))
     return assets
 
 
@@ -260,11 +281,16 @@ def generate_stac_cmrevent(item: events.CmrEvent) -> pystac.Item:
         .get(1)[0]
     )
     cmr_json["concept_id"] = cmr_json.pop("id")
+
+    if item.product_id:
+        cmr_json["title"] = item.product_id
+
     geometry = generate_geometry_from_cmr(cmr_json, item)
     if geometry:
         bbox = get_bbox(list(geojson.utils.coords(geometry["coordinates"])))
     else:
         bbox = None
+
     assets = get_assets_from_cmr(cmr_json, item)
 
     return create_item(

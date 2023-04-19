@@ -1,8 +1,7 @@
-import pytest
-
 from datetime import datetime, timezone
 
-from utils import regex, events
+import pytest
+from utils import events, regex
 
 
 @pytest.mark.parametrize(

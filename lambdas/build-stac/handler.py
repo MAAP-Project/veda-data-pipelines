@@ -5,8 +5,7 @@ from typing import Any, Dict, TypedDict, Union
 from uuid import uuid4
 
 import smart_open
-
-from utils import stac, events
+from utils import events, stac
 
 
 class S3LinkOutput(TypedDict):
@@ -69,3 +68,27 @@ if __name__ == "__main__":
         "asset_media_type": "application/x-hdf5",
     }
     print(json.dumps(handler(sample_event, {}), indent=2))
+
+    asset_event = {
+        "collection": "AfriSAR_UAVSAR_KZ",
+        "remote_fileurl": "s3://nasa-maap-data-store/file-staging/nasa-map/AfriSAR_UAVSAR_KZ___1/uavsar_AfriSAR_v1-coreg_fine_lopenp_14043_16008_140_009_160225_kz.hdr",
+        "granule_id": "G1200110083-NASA_MAAP",
+        "id": "G1200110083-NASA_MAAP",
+        "mode": "cmr",
+        "test_links": None,
+        "reverse_coords": None,
+        "asset_name": "data",
+        "asset_roles": ["data"],
+        "asset_media_type": {
+            "vrt": "application/octet-stream",
+            "bin": "binary/octet-stream",
+            "hdr": "binary/octet-stream",
+        },
+        "assets": {
+            "bin": "s3://nasa-maap-data-store/file-staging/nasa-map/AfriSAR_UAVSAR_KZ___1/uavsar_AfriSAR_v1-coreg_fine_lopenp_14043_16008_140_009_160225_kz.bin",
+            "hdr": "s3://nasa-maap-data-store/file-staging/nasa-map/AfriSAR_UAVSAR_KZ___1/uavsar_AfriSAR_v1-coreg_fine_lopenp_14043_16008_140_009_160225_kz.hdr",
+            "vrt": "s3://nasa-maap-data-store/file-staging/nasa-map/AfriSAR_UAVSAR_KZ___1/uavsar_AfriSAR_v1-coreg_fine_lopenp_14043_16008_140_009_160225_kz.vrt",
+        },
+        "product_id": "uavsar_AfriSAR_v1-coreg_fine_lopenp_14043_16008_140_009_160225_kz",
+    }
+    print(json.dumps(handler(asset_event, {}), indent=2))

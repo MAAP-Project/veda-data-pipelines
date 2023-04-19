@@ -1,24 +1,24 @@
-from datetime import datetime
-from typing import Dict, List, Literal, Optional, Union
-from pathlib import Path
 import re
+from datetime import datetime
+from pathlib import Path
+from typing import Dict, List, Literal, Optional, Union
 
-from pydantic import BaseModel, Field
 import pystac
-
+from pydantic import BaseModel, Field
 
 INTERVAL = Literal["month", "year"]
 
 
-class BaseEvent(BaseModel, frozen=True):
+class BaseEvent(BaseModel, frozen=True, arbitrary_types_allowed=True):
     collection: str
     remote_fileurl: str
 
+    product_id: Optional[str] = None
     id_regex: Optional[str] = None
     asset_name: Optional[str] = None
     asset_roles: Optional[List[str]] = None
-    asset_media_type: Optional[Union[str, pystac.MediaType]] = None
-    assets: Optional[List[Dict]] = None
+    asset_media_type: Optional[Union[str, dict, pystac.MediaType]] = None
+    assets: Optional[Dict[str, str]] = None
     mode: Optional[str] = None
     test_links: Optional[bool] = False
     reverse_coords: Optional[bool]
@@ -28,6 +28,8 @@ class BaseEvent(BaseModel, frozen=True):
             id_components = re.findall(self.id_regex, self.remote_fileurl)
             assert len(id_components) == 1
             id = "-".join(id_components[0])
+        elif self.product_id:
+            id = self.product_id
         else:
             id = Path(self.remote_fileurl).stem
         return id
