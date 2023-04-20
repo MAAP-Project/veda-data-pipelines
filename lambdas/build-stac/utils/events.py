@@ -16,7 +16,7 @@ class BaseEvent(BaseModel, frozen=True, arbitrary_types_allowed=True):
     product_id: Optional[str] = None
     id_regex: Optional[str] = None
     asset_name: Optional[str] = None
-    asset_roles: Optional[List[str]] = None
+    asset_roles: Optional[Union[Dict[str, List[str]], List[str]]] = None
     asset_media_type: Optional[Union[str, dict, pystac.MediaType]] = None
     assets: Optional[Dict[str, str]] = None
     mode: Optional[str] = None
