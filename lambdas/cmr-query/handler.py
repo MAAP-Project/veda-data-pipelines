@@ -1,9 +1,8 @@
-import datetime as dt
 import json
 import os
 import re
 from typing import Any, Dict, List
-
+from urllib.parse import urlparse
 import requests
 
 
@@ -112,6 +111,44 @@ def get_cmr_granules_endpoint(event):
     return cmr_granules_search_url
 
 
+def default_granules(event, granules):
+    link_rel = event.get("link_rel", "http://esipfed.org/ns/fedsearch/1.1/s3#")
+
+    # don't overwrite the fileurl if it's already been discovered.
+    event_defaults = {
+        "collection": event["collection"],
+        "mode": event.get("mode"),
+        "test_links": event.get("test_links"),
+        "reverse_coords": event.get("reverse_coords"),
+        ** { key: value for key, value in event.items() if "asset" in key }
+    }
+
+    for granule in granules:
+        granule_defaults = {
+            "granule_id": granule["id"],
+            "id": granule["id"],
+        }
+        link = next(
+            filter(lambda l: l["rel"] == link_rel, granule['links']), 
+            None
+        )
+        if link is None:
+            continue
+        yield {
+            ** event_defaults,
+            ** granule_defaults,
+            "remote_fileurl": link["href"],
+        }
+
+
+def stac_granules(granules):
+    def is_stac_link(link):
+        url = urlparse(link)
+        return url.path[-9:] == "stac.json" and url.scheme == "https"
+
+    return (link for granule in granules for link in granule["links"] if is_stac_link(link))
+
+
 def handler(event, context):
     """
     Lambda handler for the NetCDF ingestion pipeline
@@ -134,64 +171,34 @@ def handler(event, context):
     if response.status_code != 200:
         print(f"Got an error from CMR: {response.status_code} - {response.text}")
         return
+
+    hits = response.headers["CMR-Hits"]
+    print(f"Got {hits} from CMR")
+    granules = json.loads(response.text)["feed"]["entry"]
+    print(f"Got {len(granules)} to insert")
+    # Decide if we should continue after this page
+    # Start paging if there are more hits than the limit
+    # Stop paging when there are no more results to return
+    if len(granules) > 0 and int(hits) > limit * page:
+        print(f"Got {int(hits)} which is greater than {limit*page}")
+        event["start_after"] = page + 1
+        print(f"Returning next page {event.get('start_after')}")
     else:
-        hits = response.headers["CMR-Hits"]
-        print(f"Got {hits} from CMR")
-        granules = json.loads(response.text)["feed"]["entry"]
-        print(f"Got {len(granules)} to insert")
-        # Decide if we should continue after this page
-        # Start paging if there are more hits than the limit
-        # Stop paging when there are no more results to return
-        if len(granules) > 0 and int(hits) > limit * page:
-            print(f"Got {int(hits)} which is greater than {limit*page}")
-            page += 1
-            event["start_after"] = page
-            print(f"Returning next page {event.get('start_after')}")
-        else:
-            event.pop("start_after", None)
+        event.pop("start_after", None)
 
-    granules_to_insert = []
-    for granule in granules:
-        file_obj = {}
-        for link in granule["links"]:
-            if event.get("mode") == "stac":
-                if link["href"][-9:] == "stac.json" and link["href"][0:5] == "https":
-                    granules_to_insert.append(link)
-            else:
-                if link["rel"] == "http://esipfed.org/ns/fedsearch/1.1/s3#" or link[
-                    "rel"
-                ] == event.get("link_rel"):
-                    href = link["href"]
-                    file_obj = {
-                        "collection": collection,
-                        "remote_fileurl": href,
-                        "granule_id": granule["id"],
-                        "id": granule["id"],
-                        "mode": event.get("mode"),
-                        "test_links": event.get("test_links"),
-                        "reverse_coords": event.get("reverse_coords"),
-                    }
-                    # don't overwrite the fileurl if it's already been discovered.
-                    for key, value in event.items():
-                        if "asset" in key:
-                            file_obj[key] = value
-        granules_to_insert.append(file_obj)
-
+    granules_to_insert = list(stac_granules(granules) if event.get("mode") == "stac" else default_granules(event, granules))
     if event.get("data_file_regex"):
-        output = multi_asset_items(
+        granules_to_insert = multi_asset_items(
             data_file=event.get("data_file"),
             data_file_regex=event.get("data_file_regex"),
             data=granules_to_insert,
         )
-    else:
-        output = granules_to_insert
 
-    return_obj = {
+    return {
         **event,
         "cogify": event.get("cogify", False),
-        "objects": output,
+        "objects": granules_to_insert,
     }
-    return return_obj
 
 
 if __name__ == "__main__":
