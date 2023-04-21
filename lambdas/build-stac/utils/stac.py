@@ -103,7 +103,10 @@ def create_item(
 
 @singledispatch
 def generate_stac(item) -> pystac.Item:
-    raise Exception(f"Unsupport event type: {type(item)=}, {item=}")
+    """
+    Generate STAC item from user provided datetime range or regex & filename
+    """
+    raise NotImplementedError(f"Cannot generate STAC for {type(item)=}, {item=}")
 
 
 @generate_stac.register
@@ -161,8 +164,7 @@ def get_bbox(coord_list) -> list[float]:
     for i in (0, 1):
         res = sorted(coord_list, key=lambda x: x[i])
         box.append((res[0][i], res[-1][i]))
-    ret = [box[0][0], box[1][0], box[0][1], box[1][1]]
-    return ret
+    return [box[0][0], box[1][0], box[0][1], box[1][1]]
 
 
 def generate_geometry_from_cmr(polygons, boxes, reverse_coords) -> dict:
@@ -177,15 +179,14 @@ def generate_geometry_from_cmr(polygons, boxes, reverse_coords) -> dict:
     elif boxes:
         str_coords = boxes[0].split()
 
-    if str_coords:
-        polygon_coords = [(float(x), float(y)) for x, y in pairwise(str_coords)]
-        if len(polygon_coords) == 2:
-            polygon_coords.insert(1, (polygon_coords[1][0], polygon_coords[0][1]))
-            polygon_coords.insert(3, (polygon_coords[0][0], polygon_coords[2][1]))
-            polygon_coords.insert(4, polygon_coords[0])
-        return {"coordinates": [polygon_coords], "type": "Polygon"}
-    else:
+    if not str_coords:
         return None
+    polygon_coords = [(float(x), float(y)) for x, y in pairwise(str_coords)]
+    if len(polygon_coords) == 2:
+        polygon_coords.insert(1, (polygon_coords[1][0], polygon_coords[0][1]))
+        polygon_coords.insert(3, (polygon_coords[0][0], polygon_coords[2][1]))
+        polygon_coords.insert(4, polygon_coords[0])
+    return {"coordinates": [polygon_coords], "type": "Polygon"}
 
 
 def _content_type(link: str, asset_media_type: Union[str, dict]) -> str:
@@ -210,19 +211,19 @@ def generate_asset(
     roles: Union[str, Dict[str, List[str]]],
     link: dict,
     item: dict,
-    default_role: str = ["data"],
+    default_role: list = None,
 ) -> pystac.Asset:
     href = link.get("href")
     if item.test_links and "http" in href:
         try:
-            requests.head(href)
+            requests.head(href).raise_for_status()
         except Exception as e:
             print(f"Caught error for link {link}: {e}")
             return None
 
     # If type is in CMR link{} use that, else use the type from the asset_media_type
     asset_media_type = link.get("type", _content_type(href, item.asset_media_type))
-    asset_roles = _roles(href, roles, default_role)
+    asset_roles = _roles(href, roles, default_role or ["data"])
 
     return pystac.Asset(roles=asset_roles, href=href, media_type=asset_media_type)
 
@@ -259,12 +260,12 @@ def from_cmr_links(cmr_links, item) -> Tuple[List, Dict[str, pystac.Asset]]:
                 asset = generate_asset(
                     item.asset_roles, link, item, default_role=["metadata"]
                 )
-            asset = generate_asset(item.asset_roles, link, item)
-            if asset and "data" not in assets:
+            if (
+                asset := generate_asset(item.asset_roles, link, item)
+            ) and "data" not in assets:
                 assets["data"] = asset
         if link["rel"].endswith("s3#"):
-            asset = generate_asset(item.asset_roles, link, item)
-            if asset:
+            if asset := generate_asset(item.asset_roles, link, item):
                 assets["data"] = asset
         if link["rel"].endswith("metadata#"):
             links.append(
@@ -289,7 +290,7 @@ def from_cmr_links(cmr_links, item) -> Tuple[List, Dict[str, pystac.Asset]]:
             media_type=_content_type(link, item.asset_media_type),
         )
         pystac_assets = {key: pystac_asset(value) for key, value in item.assets.items()}
-        return links, dict(sorted({**pystac_assets, **assets}.items()))
+        return links, dict(sorted((pystac_assets | assets).items()))
 
     return links, assets
 
@@ -298,8 +299,7 @@ def cmr_api_url() -> str:
     default_cmr_api_url = (
         "https://cmr.maap-project.org"  # "https://cmr.earthdata.nasa.gov"
     )
-    cmr_api_url = os.environ.get("CMR_API_URL", default_cmr_api_url)
-    return cmr_api_url
+    return os.environ.get("CMR_API_URL", default_cmr_api_url)
 
 
 @generate_stac.register
