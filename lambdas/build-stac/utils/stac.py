@@ -2,7 +2,7 @@ import json
 import os
 from functools import singledispatch
 from pathlib import Path
-from typing import Union, Tuple, List, Dict, Any, Optional
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 import geojson
 import pystac

@@ -1,5 +1,6 @@
 from unittest.mock import patch
-from utils.stac import generate_stac_cmrevent, from_cmr_links
+
+from utils.stac import from_cmr_links, generate_stac_cmrevent
 
 
 def test_generate_stac_cmrevent(
