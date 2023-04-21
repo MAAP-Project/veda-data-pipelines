@@ -45,7 +45,7 @@ def create_item(
             collection=collection,
             bbox=bbox,
         )
-        stac_item.links.extend(links) 
+        stac_item.links.extend(links)
         stac_item.assets = assets
         return stac_item
 
