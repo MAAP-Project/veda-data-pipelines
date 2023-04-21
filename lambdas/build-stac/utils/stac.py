@@ -207,7 +207,10 @@ def _roles(link: str, asset_roles: Union[list, dict], default: List[str]) -> Lis
 
 
 def generate_asset(
-    roles: Union[str, Dict[str, List[str]]], link: dict, item: dict
+    roles: Union[str, Dict[str, List[str]]],
+    link: dict,
+    item: dict,
+    default_role: str = ["data"],
 ) -> pystac.Asset:
     href = link.get("href")
     if item.test_links and "http" in href:
@@ -219,7 +222,7 @@ def generate_asset(
 
     # If type is in CMR link{} use that, else use the type from the asset_media_type
     asset_media_type = link.get("type", _content_type(href, item.asset_media_type))
-    asset_roles = _roles(href, item.asset_roles, ["data"])
+    asset_roles = _roles(href, roles, default_role)
 
     return pystac.Asset(roles=asset_roles, href=href, media_type=asset_media_type)
 
@@ -253,10 +256,8 @@ def from_cmr_links(cmr_links, item) -> Tuple[List, Dict[str, pystac.Asset]]:
         if link["rel"].endswith("data#"):
             extension = os.path.splitext(link["href"])[-1].replace(".", "")
             if extension == "prj":
-                links.append(
-                    generate_link(
-                        "metadata", link["href"], link.get("type"), link.get("title")
-                    )
+                asset = generate_asset(
+                    item.asset_roles, link, item, default_role=["metadata"]
                 )
             asset = generate_asset(item.asset_roles, link, item)
             if asset and "data" not in assets:
