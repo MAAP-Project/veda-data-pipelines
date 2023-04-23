@@ -2,7 +2,7 @@ import json
 import os
 from functools import singledispatch
 from pathlib import Path
-from typing import Union
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 import geojson
 import pystac
@@ -19,6 +19,7 @@ from . import events, regex, role
 def create_item(
     id,
     properties,
+    links,
     datetime,
     item_url,
     collection,
@@ -44,6 +45,7 @@ def create_item(
             collection=collection,
             bbox=bbox,
         )
+        stac_item.links.extend(links)
         stac_item.assets = assets
         return stac_item
 
@@ -101,7 +103,10 @@ def create_item(
 
 @singledispatch
 def generate_stac(item) -> pystac.Item:
-    raise Exception(f"Unsupport event type: {type(item)=}, {item=}")
+    """
+    Generate STAC item from user provided datetime range or regex & filename
+    """
+    raise NotImplementedError(f"Cannot generate STAC for {type(item)=}, {item=}")
 
 
 @generate_stac.register
@@ -159,145 +164,176 @@ def get_bbox(coord_list) -> list[float]:
     for i in (0, 1):
         res = sorted(coord_list, key=lambda x: x[i])
         box.append((res[0][i], res[-1][i]))
-    ret = [box[0][0], box[1][0], box[0][1], box[1][1]]
-    return ret
+    return [box[0][0], box[1][0], box[0][1], box[1][1]]
 
 
-def generate_geometry_from_cmr(cmr_json, item) -> dict:
+def generate_geometry_from_cmr(polygons, boxes, reverse_coords) -> dict:
     """
     Generates geoJSON object from list of coordinates provided in CMR JSON
     """
     str_coords = None
-    if cmr_json.get("polygons"):
-        str_coords = cmr_json["polygons"][0][0].split()
-        if item.reverse_coords:
+    if polygons:
+        str_coords = polygons[0][0].split()
+        if reverse_coords:
             str_coords.reverse()
-    elif cmr_json.get("boxes"):
-        str_coords = cmr_json["boxes"][0].split()
+    elif boxes:
+        str_coords = boxes[0].split()
 
-    if str_coords:
-        polygon_coords = [(float(x), float(y)) for x, y in pairwise(str_coords)]
-        if len(polygon_coords) == 2:
-            polygon_coords.insert(1, (polygon_coords[1][0], polygon_coords[0][1]))
-            polygon_coords.insert(3, (polygon_coords[0][0], polygon_coords[2][1]))
-            polygon_coords.insert(4, polygon_coords[0])
-        return {"coordinates": [polygon_coords], "type": "Polygon"}
-    else:
+    if not str_coords:
         return None
+    polygon_coords = [(float(x), float(y)) for x, y in pairwise(str_coords)]
+    if len(polygon_coords) == 2:
+        polygon_coords.insert(1, (polygon_coords[1][0], polygon_coords[0][1]))
+        polygon_coords.insert(3, (polygon_coords[0][0], polygon_coords[2][1]))
+        polygon_coords.insert(4, polygon_coords[0])
+    return {"coordinates": [polygon_coords], "type": "Polygon"}
 
 
 def _content_type(link: str, asset_media_type: Union[str, dict]) -> str:
     if isinstance(asset_media_type, dict):
         file = Path(link)
-        return asset_media_type.get(file.suffix, asset_media_type.get(file.suffix[1:]))
+        return asset_media_type.get(
+            file.suffix, asset_media_type.get(file.suffix[1:], None)
+        )
     else:
         return asset_media_type
 
 
-def gen_asset(role: str, link: dict, item: dict) -> pystac.Asset:
-    if item.test_links and "http" in link.get("href"):
+def _roles(link: str, asset_roles: Union[list, dict], default: List[str]) -> List[str]:
+    if isinstance(asset_roles, dict):
+        file = Path(link)
+        return asset_roles.get(file.suffix, asset_roles.get(file.suffix[1:], default))
+    else:
+        return asset_roles
+
+
+def generate_asset(
+    roles: Union[str, Dict[str, List[str]]],
+    link: dict,
+    item: dict,
+    default_role: list = None,
+) -> pystac.Asset:
+    href = link.get("href")
+    if item.test_links and "http" in href:
         try:
-            requests.head(link.get("href"))
+            requests.head(href).raise_for_status()
         except Exception as e:
             print(f"Caught error for link {link}: {e}")
             return None
-    asset_media_type = link.get("type")
-    # Fallback to asset_media_type defined in the item
-    if asset_media_type == None and role == "data":
-        asset_media_type = item.asset_media_type
 
-    return pystac.Asset(
-        roles=[role], href=link.get("href"), media_type=asset_media_type
+    # If type is in CMR link{} use that, else use the type from the asset_media_type
+    asset_media_type = link.get("type", _content_type(href, item.asset_media_type))
+    asset_roles = _roles(href, roles, default_role or ["data"])
+
+    return pystac.Asset(roles=asset_roles, href=href, media_type=asset_media_type)
+
+
+def generate_link(
+    rel: Union[str, pystac.RelType],
+    target: Union[str, pystac.STACObject],
+    media_type: Optional[str] = None,
+    title: Optional[str] = None,
+    extra_fields: Optional[Dict[str, Any]] = None,
+) -> pystac.Link:
+    """
+    Generate a link object from a rel, target, media type, title, and extra fields.
+    """
+    return pystac.Link(
+        rel=rel,
+        target=target,
+        media_type=media_type,
+        title=title,
+        extra_fields=extra_fields,
     )
 
 
-def get_assets_from_cmr(cmr_json, item) -> dict[pystac.Asset]:
+def from_cmr_links(cmr_links, item) -> Tuple[List, Dict[str, pystac.Asset]]:
     """
     Generates a dictionary of pystac.Asset's from cmr_json links
-    TODO(aimee): This is using some heuristics and could probably be refined according to some standard in the future.
     """
     assets = {}
-    links = cmr_json["links"]
-    for link in links:
-        if link["rel"] == "http://esipfed.org/ns/fedsearch/1.1/data#":
+    links = []
+    for link in cmr_links:
+        if link["rel"].endswith("data#"):
             extension = os.path.splitext(link["href"])[-1].replace(".", "")
             if extension == "prj":
-                asset = gen_asset("metadata", link, item)
-                if asset:
-                    assets["metadata"] = asset
-            asset = gen_asset("data", link, item)
-            if asset and "data" not in assets:
+                asset = generate_asset(
+                    item.asset_roles, link, item, default_role=["metadata"]
+                )
+            if (
+                asset := generate_asset(item.asset_roles, link, item)
+            ) and "data" not in assets:
                 assets["data"] = asset
-        if link["rel"] == "http://esipfed.org/ns/fedsearch/1.1/s3#":
-            asset = gen_asset("data", link, item)
-            if asset:
+        if link["rel"].endswith("s3#"):
+            if asset := generate_asset(item.asset_roles, link, item):
                 assets["data"] = asset
-        if (
-            link["rel"] == "http://esipfed.org/ns/fedsearch/1.1/metadata#"
-            and "metadata" not in assets
-        ):
-            asset = gen_asset("metadata", link, item)
-            if asset:
-                assets["metadata"] = asset
-        if (
-            link["rel"] == "http://esipfed.org/ns/fedsearch/1.1/documentation#"
-            and "documentation" not in assets
-        ):
-            asset = gen_asset("documentation", link, item)
-            if asset:
-                assets["documentation"] = asset
+        if link["rel"].endswith("metadata#"):
+            links.append(
+                generate_link(
+                    "metadata", link["href"], link.get("type"), link.get("title")
+                )
+            )
+        if link["rel"].endswith("documentation#"):
+            links.append(
+                generate_link(
+                    "documentation", link["href"], link.get("type"), link.get("title")
+                )
+            )
 
     if item.assets:
+        # Removes the default data asset, exists as a duplicate
         del assets["data"]
-        # Quick fix for failing item ingest
-        if assets.get("documentation"):
-            del assets["documentation"]
+
         pystac_asset = lambda link: pystac.Asset(
-            roles=["data"],
+            roles=_roles(link, item.asset_roles, ["data"]),
             href=link,
             media_type=_content_type(link, item.asset_media_type),
         )
         pystac_assets = {key: pystac_asset(value) for key, value in item.assets.items()}
-        return dict(sorted({**pystac_assets, **assets}.items()))
-    return assets
+        return links, dict(sorted((pystac_assets | assets).items()))
+
+    return links, assets
 
 
 def cmr_api_url() -> str:
     default_cmr_api_url = (
         "https://cmr.maap-project.org"  # "https://cmr.earthdata.nasa.gov"
     )
-    cmr_api_url = os.environ.get("CMR_API_URL", default_cmr_api_url)
-    return cmr_api_url
+    return os.environ.get("CMR_API_URL", default_cmr_api_url)
 
 
 @generate_stac.register
 def generate_stac_cmrevent(item: events.CmrEvent) -> pystac.Item:
     """
-    Generate STAC Item from CMR granule
+    Generates a STAC Item from a CmrEvent
     """
-    cmr_json = (
+    properties = (
         GranuleQuery(mode=f"{cmr_api_url()}/search/")
         .concept_id(item.granule_id)
         .get(1)[0]
     )
-    cmr_json["concept_id"] = cmr_json.pop("id")
+    properties["concept_id"] = properties.pop("id")
+    del properties["title"]  # Remove title from properties, it's already in the item
 
-    if item.product_id:
-        cmr_json["title"] = item.product_id
+    geometry = generate_geometry_from_cmr(
+        properties.pop("polygons", None),
+        properties.pop("boxes", None),
+        item.reverse_coords,
+    )
 
-    geometry = generate_geometry_from_cmr(cmr_json, item)
     if geometry:
         bbox = get_bbox(list(geojson.utils.coords(geometry["coordinates"])))
     else:
         bbox = None
 
-    assets = get_assets_from_cmr(cmr_json, item)
+    links, assets = from_cmr_links(properties.pop("links", None), item)
 
     return create_item(
         id=item.item_id(),
-        properties=cmr_json,
+        properties=properties,
+        links=links,
         mode=item.mode,
-        datetime=str_to_datetime(cmr_json["time_start"]),
+        datetime=str_to_datetime(properties["time_start"]),
         item_url=item.remote_fileurl,
         collection=item.collection,
         asset_name=item.asset_name,
