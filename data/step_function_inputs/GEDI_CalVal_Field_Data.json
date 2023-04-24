@@ -1,0 +1,14 @@
+[
+  {
+    "queue_messages": "true",
+    "collection": "GEDI_CalVal_Field_Data",
+    "version": "2",
+    "discovery": "cmr",
+    "mode": "cmr",
+    "asset_name": "data",
+    "asset_roles": [
+      "data"
+    ],
+    "cmr_api_url": "https://cmr.maap-project.org"
+  }
+]

@@ -1,0 +1,32 @@
+{
+  "id": "GlobCover_05_06",
+  "stac_version": "1.0.0",
+  "license": "not-provided",
+  "title": "GlobCover Global Land Cover Product (2005-06)",
+  "type": "Collection",
+  "description": "GlobCover is an European Space Agency (ESA) initiative which began in 2005 in partnership with several organizations including JRC, EEA, FAO, UNEP, GOFC-GOLD and IGBP. The aim of the project was to develop a service capable of delivering global composites and land cover maps using as input observations from the 300m MERIS sensor on board the ENVISAT satellite mission. The GlobCover land cover maps cover 2 periods: December 2004 - June 2006 and January - December 2009. This dataset provides the December 2004 - June 2006  data. ",
+  "extent": {
+    "spatial": {
+      "bbox": [
+        [
+          -180,
+          90,
+          180,
+          -90
+        ]
+      ]
+    },
+    "temporal": {
+      "interval": [
+        [
+          "2004-12-01T00:00:00.000Z",
+          "2006-06-30T23:59:59.000Z"
+        ]
+      ]
+    }
+  },
+  "links": [],
+  "assets": {},
+  "dashboard:is_periodic": false,
+  "dashboard:time_density": null
+}
