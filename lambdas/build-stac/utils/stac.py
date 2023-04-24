@@ -49,9 +49,29 @@ def create_item(
         stac_item.assets = assets
         return stac_item
 
-    def create_stac_item():
-        if mode == "cmr":
-            return create_item_item()
+    if mode == "cmr":
+        return create_item_item()
+
+    rasterio_kwargs = {}
+    if role_arn := os.environ.get("DATA_MANAGEMENT_ROLE_ARN"):
+        creds = role.assume_role(role_arn, "veda-data-pipelines_build-stac")
+        rasterio_kwargs["session"] = AWSSession(
+            aws_access_key_id=creds["AccessKeyId"],
+            aws_secret_access_key=creds["SecretAccessKey"],
+            aws_session_token=creds["SessionToken"],
+        )
+
+    with rasterio.Env(
+        session=rasterio_kwargs.get("session"),
+        options={
+            **rasterio_kwargs,
+            "GDAL_MAX_DATASET_POOL_SIZE": 1024,
+            "GDAL_DISABLE_READDIR_ON_OPEN": False,
+            "GDAL_CACHEMAX": 1024000000,
+            "GDAL_HTTP_MAX_RETRY": 4,
+            "GDAL_HTTP_RETRY_DELAY": 1,
+        },
+    ):
         try:
             # `stac.create_stac_item` tries to opon a dataset with rasterio.
             # if that fails (since not all items are rasterio-readable), fall back to pystac.Item
@@ -77,28 +97,6 @@ def create_item(
                 return create_item_item()
             else:
                 raise
-
-    rasterio_kwargs = {}
-    if role_arn := os.environ.get("DATA_MANAGEMENT_ROLE_ARN"):
-        creds = role.assume_role(role_arn, "veda-data-pipelines_build-stac")
-        rasterio_kwargs["session"] = AWSSession(
-            aws_access_key_id=creds["AccessKeyId"],
-            aws_secret_access_key=creds["SecretAccessKey"],
-            aws_session_token=creds["SessionToken"],
-        )
-
-    with rasterio.Env(
-        session=rasterio_kwargs.get("session"),
-        options={
-            **rasterio_kwargs,
-            "GDAL_MAX_DATASET_POOL_SIZE": 1024,
-            "GDAL_DISABLE_READDIR_ON_OPEN": False,
-            "GDAL_CACHEMAX": 1024000000,
-            "GDAL_HTTP_MAX_RETRY": 4,
-            "GDAL_HTTP_RETRY_DELAY": 1,
-        },
-    ):
-        return create_stac_item()
 
 
 @singledispatch
